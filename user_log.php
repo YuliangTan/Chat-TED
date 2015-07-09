@@ -1,4 +1,3 @@
-<form action="user_log.php" method="get">
 <?php
 function writeLog(){
 $logFile = 'userlogin.log';
