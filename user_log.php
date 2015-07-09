@@ -1,8 +1,8 @@
 <?php
-function writeLog($msg){
+function writeLog(){
 $logFile = 'userlogin.log';
-$msg = date('Y-m-d H:i:s').' >>> '.$msg."\r\n";
+$msg = date('Y-m-d H:i:s').' >>> '.$_POST["info"]."\r\n";
 file_put_contents($logFile,$msg,FILE_APPEND );
 }
-writeLog( $_POST["info"])
+writeLog()
 ?>
