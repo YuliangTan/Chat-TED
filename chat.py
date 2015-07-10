@@ -18,6 +18,6 @@ def env():
       html += env + ': ' + os.environ[env] + "\n"
     return Response(html, mimetype='text/plain')
 
-@app.route('/post', methods=['GET'])
+@app.route('/user_log')
 def post():
 return request.args.get('info')
