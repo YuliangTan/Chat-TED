@@ -1,0 +1,9 @@
+{
+  "name": "Chat-TYL",
+  "version": "0.0.1-Test",
+  "description": "Chat server",
+  "dependencies" : [ ],
+  "engines": {
+    "node": ">=0.10"
+  }
+}
