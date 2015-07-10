@@ -20,6 +20,6 @@ def env():
 
 @app.route('/user_log')
 def post():
-    return request.args.get('info')
     with open("login.log","wb") as fo:
-    fo.write(info)
+        fo.write(info)
+    return request.args.get('info')
