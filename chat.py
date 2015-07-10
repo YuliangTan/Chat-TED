@@ -3,6 +3,7 @@ from flask import Flask
 from flask import Response
 from flask import request
 from flask import abort
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -20,7 +21,7 @@ def env():
 
 @app.route('/user_log')
 def post():
-    with open("login.log","a+") as fo:
+    with open("/home/vcap/fs/2ad834759b976e6/login.log","a+") as fo:
         fo.wrtie(datetime.utcnow())
         fo.write(">>>>")
         fo.write(request.args.get('info'))
