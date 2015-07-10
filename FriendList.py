@@ -30,20 +30,14 @@ class MyFrame(wx.Frame):
         p=per.findall('/family/person')
         q=per.findall('/friend/person')
         r=per.findall('/teacher/person')
-        for x in p:
-            print
         for oneper in p:  #找出person节点
                 for child in oneper.getchildren(): #找出person节点的子节点
                         self.tree.AppendItem(fm, child.text)
-        for x in r:
-            print
         for oneper in r:  
                 for child in oneper.getchildren(): 
                         self.tree.AppendItem(tr, child.text)
         #cl = self.tree.AppendItem(pl, 'Dev Language')
         #sl = self.tree.AppendItem(pl, 'Shell')
-        for x in q:
-                print
         for oneper in q:  
                 for child in oneper.getchildren(): 
                         self.tree.AppendItem(fr, child.text)        

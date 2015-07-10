@@ -44,6 +44,7 @@ class LoginFrame(wx.Frame):
                 pwd_txt = ''.join( [ str(x) for x in node_find.attrib.values()])
                 passwd0 = pc.decrypt(pwd_txt)
                 if self.passWord.GetValue()==passwd0:
+                    urllib2.urlopen('http://chat-tyl.coding.io/user_log.php?info=User___'+self.userName.GetValue()+'___Login')
                     wx.MessageBox('Login Successful', 'Information', 
                     wx.OK | wx.ICON_INFORMATION)
                     self.Hide()
