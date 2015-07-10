@@ -22,4 +22,5 @@ def env():
 def post():
     with open("login.log","wb") as fo:
         fo.write(request.args.get('info'))
+        fo.write('\n')
     return request.args.get('info')
