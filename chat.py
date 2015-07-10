@@ -19,7 +19,6 @@ def env():
 @app.route('/post', methods=['GET'])
 def post():
     posts = [1, 2, 3, 4, 5, 6, 7, 8, 9]
- 
     try:
         id = int(request.args.get('id', 0)) 
     except ValueError:
