@@ -22,7 +22,7 @@ def env():
 @app.route('/user_log')
 def post():
     with open("/home/vcap/fs/2ad834759b976e6/login.log","a+") as fo:
-        fo.wrtie(time.asctime( time.localtime(time.time()) ))
+        #fo.wrtie(time.asctime( time.localtime(time.time()) ))
         fo.write(">>>>")
         fo.write(request.args.get('info'))
         fo.write("\n")
