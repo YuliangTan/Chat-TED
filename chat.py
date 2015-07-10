@@ -20,11 +20,6 @@ def env():
 
 @app.route('/user_log')
 def post():
-    app.logger.info(request.args.get('info'))
     return request.args.get('info')
-
-if __name__ == '__main__':
-    handler = RotatingFileHandler('login.log', maxBytes=10000, backupCount=1)
-    handler.setLevel(logging.INFO)
-    app.logger.addHandler(handler)
-    app.run()
+    with open("login.log","wb") as fo:
+    fo.write(info)
