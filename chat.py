@@ -20,12 +20,4 @@ def env():
 
 @app.route('/post', methods=['GET'])
 def post():
-    try:
-        info = str(request.args.get('info', '')) 
-    except ValueError:
-        abort(404)     
-    else:
-        if info in posts:
-            return Response(info)
-        else:
-            abort(404)
+return request.args.get('info')
