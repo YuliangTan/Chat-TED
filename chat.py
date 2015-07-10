@@ -30,4 +30,4 @@ def post():
 @app.route('/time')
 def time():
    now = datetime.utcnow()
-   print now
+   return now
