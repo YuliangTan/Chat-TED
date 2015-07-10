@@ -27,7 +27,7 @@ def post():
         fo.write("\n")
     return request.args.get('info')
 
-@app.route('time')
+@app.route('/time')
 def time():
    now = datetime.utcnow()
    print now
