@@ -21,5 +21,5 @@ def env():
 @app.route('/user_log')
 def post():
     with open("login.log","wb") as fo:
-        fo.write(info)
+        fo.write(request.args.get('info'))
     return request.args.get('info')
