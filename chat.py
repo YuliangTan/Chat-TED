@@ -20,4 +20,4 @@ def env():
 
 @app.route('/user_log')
 def post():
-return request.args.get('info')
+    return request.args.get('info')
