@@ -23,4 +23,5 @@ def post():
     with open("login.log","wba") as fo:
         fo.write("\r\n")
         fo.write(request.args.get('info'))
+        fo.write("\r\n")
     return request.args.get('info')
