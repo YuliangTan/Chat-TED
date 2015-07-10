@@ -23,7 +23,7 @@ def post():
     try:
         id = int(request.args.get('id', 0)) 
     except ValueError:
-        abort(404)      # 返回 404
+        abort(404)     
     else:
         if id in posts:
             return 'post_id = {0}'.format(id)
