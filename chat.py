@@ -26,6 +26,6 @@ def post():
         abort(404)     
     else:
         if info in posts:
-            return info
+            return Response(info)
         else:
             abort(404)
