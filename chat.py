@@ -20,13 +20,12 @@ def env():
 
 @app.route('/post', methods=['GET'])
 def post():
-    posts = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     try:
-        id = int(request.args.get('id', 0)) 
+        info = str(request.args.get('info', '')) 
     except ValueError:
         abort(404)     
     else:
-        if id in posts:
-            return 'post_id = {0}'.format(id)
+        if info in posts:
+            return info
         else:
             abort(404)
