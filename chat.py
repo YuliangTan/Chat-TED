@@ -4,6 +4,7 @@ from flask import Response
 from flask import request
 from flask import abort
 from datetime import datetime
+import moment
 
 app = Flask(__name__)
 
@@ -22,6 +23,7 @@ def env():
 @app.route('/user_log')
 def post():
     with open("/home/vcap/fs/2ad834759b976e6/login.log","a+") as fo:
+        fo.write(moment.now().format("YYYY-M-D"))
         fo.write("----")
         fo.write(request.args.get('info'))
         fo.write("\n")
@@ -29,5 +31,4 @@ def post():
 
 @app.route('/time')
 def time():
-   now = datetime.utcnow()
-   return now
+   return moment.now().format("YYYY-M-D")
