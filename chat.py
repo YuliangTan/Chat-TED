@@ -1,5 +1,4 @@
 import os
-import redis
 from flask import Flask
 from flask import Response
 from flask import request
@@ -43,25 +42,3 @@ def post():
 @app.route('/time')
 def time():
    return moment.now().format("YYYY-M-D")
-
-@app.route('/get')
-def get():
-   r.set('foo', 'bar')
-   return r.get('foo')
-
-@app.route('/set')
-def set():
-   s = redis.StrictRedis(host='10.9.21.212', port=5398, db=0, password='9145ef3c-9d30-43aa-b804-3aa66b79bf59')
-   i = 0 
-   while True:  
-             i += 1  
-             s.publish("first channel", "the i is " + str(i))  
-             return ("the i is " + str(i))  
-             time.sleep(1)  
-   r = redis.StrictRedis(host='10.9.21.212', port=5398, db=0, password='9145ef3c-9d30-43aa-b804-3aa66b79bf59')
-   p = r.pubsub() 
-   p.subscribe("first channel")
-   while True:  
-            message = p.listen()  
-            if message:  
-                 return message  
