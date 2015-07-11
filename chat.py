@@ -44,4 +44,5 @@ def time():
 
 @app.route('/send_text')
 def send_text():
-   REDIS_CONN =  redis.Redis(host='10.9.21.212',port=5398,db=0771473a-fc89-45fc-b43c-d2731ead361c,password=9145ef3c-9d30-43aa-b804-3aa66b79bf59)
+   REDIS_CONN =  redis.Redis(host='10.9.21.212',port=5398,db='0771473a-fc89-45fc-b43c-d2731ead361c',password='9145ef3c-9d30-43aa-b804-3aa66b79bf59')
+   REDIS_CONN.publish('channel_1', 'i am publishing message')
