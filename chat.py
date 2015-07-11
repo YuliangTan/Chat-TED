@@ -1,4 +1,5 @@
 import os
+import redis
 from flask import Flask
 from flask import Response
 from flask import request
@@ -6,7 +7,9 @@ from flask import abort
 from datetime import datetime
 import moment
 from flask_sockets import Sockets
-import redis
+from flask import Flask
+
+REDIS_URL = "redis://:127.0.0.1:6379/0"
 
 app = Flask(__name__)
 sockets = Sockets(app)
@@ -42,7 +45,8 @@ def post():
 def time():
    return moment.now().format("YYYY-M-D")
 
-@app.route('/send_text')
-def send_text():
-   REDIS_CONN =  redis.Redis(host='10.9.21.212',port=5398,db='0771473a-fc89-45fc-b43c-d2731ead361c',password='9145ef3c-9d30-43aa-b804-3aa66b79bf59')
-   REDIS_CONN.publish('channel_1', 'i am publishing message')
+@app.route('/get')
+def get():
+   r = redis.StrictRedis(host='10.9.21.212', port=5398, db=0, password='9145ef3c-9d30-43aa-b804-3aa66b79bf59')
+   r.set('foo', 'bar')
+   return r.get('foo')
