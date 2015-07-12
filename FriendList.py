@@ -2,8 +2,12 @@
 #coding=utf-8
 import wx
 import sys
+import Talk
+import redis
 from xml.etree import ElementTree as ET
 class MyFrame(wx.Frame):
+    def OnClickLeftKey(self, event,un):
+        Talk.myapp(user_name=self.tree.GetItemText(event.GetItem()),un=un)
     def OnClose(self, event):
         dlg = wx.MessageDialog(self, 
             "Do you really want to close this application?",
@@ -12,7 +16,7 @@ class MyFrame(wx.Frame):
         dlg.Destroy()
         if result == wx.ID_OK:
             sys.exit()
-    def __init__(self, parent, id, title,user):
+    def __init__(self, parent, id, title,user,un):
         wx.Frame.__init__(self, parent, id, title,
                           wx.DefaultPosition, wx.Size(200, 450))
         hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -20,6 +24,7 @@ class MyFrame(wx.Frame):
         panel1 = wx.Panel(self, -1)
         self.tree = wx.TreeCtrl(panel1, 1, wx.DefaultPosition, (-1, -1),
                                 wx.TR_HIDE_ROOT|wx.TR_HAS_BUTTONS)
+        self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt,un=un : self.OnClickLeftKey(evt,un), self.tree)
         root = self.tree.AddRoot('My friend')
         fm = self.tree.AppendItem(root, 'Family people')
         tr = self.tree.AppendItem(root, 'Teacher')
