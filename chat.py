@@ -8,9 +8,12 @@ import moment
 from flask_sockets import Sockets
 from flask import Flask
 import time
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 sockets = Sockets(app)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 
 @sockets.route('/echo')
 def echo_socket(ws):
@@ -42,3 +45,15 @@ def post():
 @app.route('/time')
 def time():
    return moment.now().format("YYYY-M-D")
+
+@socketio.on('message')
+def handle_message(message):
+    print('received message: ' + message)
+
+@socketio.on('connect', namespace='/chat')
+def test_connect():
+    emit('my response', {'data': 'Connected'})
+
+@socketio.on('disconnect', namespace='/chat')
+def test_disconnect():
+    print('Client disconnected')
