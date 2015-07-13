@@ -10,10 +10,10 @@ class myapp(wx.App):
         global username
         username=user_name
         self.bkg = wx.Panel(frame)
-        global cr_n     
-        cr_n=user_name+' to '+un
-        global cr_m     
-        cr_m=un+' to '+user_name
+        global un_g
+        un_g=un
+        global user_name_g
+        user_name_g=user_name
         self.tshow = wx.TextCtrl(self.bkg,style = wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY)
         self.tinput = wx.TextCtrl(self.bkg)
         self.bt = wx.Button(self.bkg,label = "Send")      
@@ -36,27 +36,24 @@ class myapp(wx.App):
         self.tshow.AppendText(self.tinput.GetValue() + "\n")
         rc = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
         ps = rc.pubsub()
-        ps.subscribe([cr_n,cr_m])
-        user = username+self.tinput.GetValue() 
-        rc.publish([cr_n,cr_m], user)
+        ps.subscribe([user_name_g])
+        user = un_g+self.tinput.GetValue() 
+        rc.publish(user_name_g, user)
         self.tinput.SetValue("")
     def receive(self):
        rd = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
        ps = rd.pubsub()
        #ps.subscribe(['test', 'user'])
-       ps.subscribe([cr_n,cr_m])
+       ps.subscribe([un_g])
        for item in ps.listen():
           if item['type'] == 'message':
-               #print item['data']
-               #print data_get[ ' Test ' ]
-               print username
-               un_t=item['data'].find(username)
-               if un_t == '-1':
+               un_t=item['data'].find(user_name_g)
+               if un_t==0:
                    now = datetime.datetime.now()
                    self.tshow.SetDefaultStyle(wx.TextAttr("BLUE"))
                    self.tshow.AppendText("User:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
                    self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
-                   self.tshow.AppendText(item['data'].lstrip(username) + "\n")
+                   self.tshow.AppendText(item['data'].lstrip(user_name_g) + "\n")
 
 #if __name__ == '__main__':
     #app = myapp()
