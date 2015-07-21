@@ -6,8 +6,12 @@ from flask import abort
 from datetime import datetime
 import moment
 from flask import Flask
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
+socketio.run(app)
 
 @app.route('/')
 def root():
@@ -29,3 +33,9 @@ def post():
         fo.write(request.args.get('info'))
         fo.write("\n")
     return request.args.get('info')
+
+@socketio.on('connect')
+def test_message(message):
+    currentSocketId = request.namespace.socket.sessid
+    print currentSocketId
+    emit('my response', {'data': 'got it!'})
