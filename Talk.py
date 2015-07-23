@@ -3,7 +3,7 @@ import wx
 import datetime
 import redis
 import thread
-import json
+import simplejson as json
 from time import sleep
 class myapp(wx.App):
     def __init__(self,user_name,un):
@@ -13,8 +13,6 @@ class myapp(wx.App):
         self.bkg = wx.Panel(frame)
         global un_g
         un_g=un
-        global user_name_g
-        user_name_g=user_name
         self.tshow = wx.TextCtrl(self.bkg,style = wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY)
         self.tinput = wx.TextCtrl(self.bkg)
         self.bt = wx.Button(self.bkg,label = "Send")      
@@ -37,9 +35,15 @@ class myapp(wx.App):
         self.tshow.AppendText(self.tinput.GetValue() + "\n")
         rc = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
         ps = rc.pubsub()
-        ps.subscribe([user_name_g])
-        user = un_g+self.tinput.GetValue() 
-        rc.publish(user_name_g, user)
+        ps.subscribe([username])
+        #user = un_g+self.tinput.GetValue() 
+        send_dic = {
+         'type': 'p2pchat-in-line',
+         'user': username,
+         'content': self.tinput.GetValue() 
+       }
+        user = json.dumps(send_dic)
+        rc.publish(username, user)
         self.tinput.SetValue("")
     def receive(self):
        rd = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
@@ -48,16 +52,15 @@ class myapp(wx.App):
        ps.subscribe([un_g])
        for item in ps.listen():
           if item['type'] == 'message':
-               un_t=item['data'].find(user_name_g)
-               if un_t==0:
-                   now = datetime.datetime.now()
-                   self.tshow.SetDefaultStyle(wx.TextAttr("BLUE"))
-                   wx.CallAfter(self.tshow.AppendText, "User:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
-                   #self.tshow.AppendText("User:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
-                   sleep(0.5)
-                   self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
-                   wx.CallAfter(self.tshow.AppendText, item['data'].lstrip(user_name_g) + "\n")
-                   #self.tshow.AppendText(item['data'].lstrip(user_name_g) + "\n")
+               text_json= json.loads(item['data'])
+               if text_json['type'] == 'p2pchat-in-line':
+                   if text_json['user'] == un_g: 
+                       now = datetime.datetime.now()
+                       self.tshow.SetDefaultStyle(wx.TextAttr("BLUE"))
+                       wx.CallAfter(self.tshow.AppendText, "User:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
+                       sleep(0.5)
+                       self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
+                       wx.CallAfter(self.tshow.AppendText, text_json['content'] + "\n")
 
 #if __name__ == '__main__':
     #app = myapp()
