@@ -4,6 +4,7 @@ import datetime
 import redis
 import thread
 import json
+from time import sleep
 class myapp(wx.App):
     def __init__(self,user_name,un):
         frame = wx.Frame(None,title="With " + user_name + " Talking",pos = (100,50),size = (400,300))
@@ -51,9 +52,12 @@ class myapp(wx.App):
                if un_t==0:
                    now = datetime.datetime.now()
                    self.tshow.SetDefaultStyle(wx.TextAttr("BLUE"))
-                   self.tshow.AppendText("User:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
+                   wx.CallAfter(self.tshow.AppendText, "User:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
+                   #self.tshow.AppendText("User:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
+                   sleep(0.5)
                    self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
-                   self.tshow.AppendText(item['data'].lstrip(user_name_g) + "\n")
+                   wx.CallAfter(self.tshow.AppendText, item['data'].lstrip(user_name_g) + "\n")
+                   #self.tshow.AppendText(item['data'].lstrip(user_name_g) + "\n")
 
 #if __name__ == '__main__':
     #app = myapp()
