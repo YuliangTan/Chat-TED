@@ -1,5 +1,6 @@
 #!/usr/bin/python
 #coding=utf-8
+import os
 import wx
 import sys
 import Talk
@@ -8,13 +9,14 @@ from xml.etree import ElementTree as ET
 class MyFrame(wx.Frame):
     def OnClickLeftKey(self, event,un):
         Talk.myapp(user_name=self.tree.GetItemText(event.GetItem()),un=un)
-    def OnClose(self, event):
+    def OnClose(self, event,un):
         dlg = wx.MessageDialog(self, 
             "Do you really want to close this application?",
             "Confirm Exit", wx.OK|wx.CANCEL|wx.ICON_QUESTION)
         result = dlg.ShowModal()
         dlg.Destroy()
         if result == wx.ID_OK:
+            os.remove(un + ".xml")
             sys.exit()
     def __init__(self, parent, id, title,user,un):
         wx.Frame.__init__(self, parent, id, title,
@@ -51,4 +53,5 @@ class MyFrame(wx.Frame):
         panel1.SetSizer(vbox)
         self.SetSizer(hbox)
         self.Center()
-        self.Bind(wx.EVT_CLOSE, self.OnClose)
+        self.Bind(wx.EVT_CLOSE, lambda evt,un=un : self.OnClose(evt,un))
+        #self.Bind(wx.EVT_CLOSE, self.OnClose)
