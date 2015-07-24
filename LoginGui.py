@@ -11,6 +11,7 @@ import Axel
 from xml.etree import ElementTree
 from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
+import MySQLdb
 class prpcrypt():
     def __init__(self, key):
         self.key = key
@@ -32,27 +33,41 @@ class LoginFrame(wx.Frame):
         self.loginButton.Bind(wx.EVT_BUTTON, self.login)
         self.Show()
     def login(self, event):
-            ssl._create_default_https_context = ssl._create_unverified_context
-            Axel.paxel('https://7nar2o.com5.z0.glb.clouddn.com/user/' + self.userName.GetValue() + ".xml", self.userName.GetValue() + '.xml', blocks=4, proxies={} )
-            response = os.path.exists(self.userName.GetValue()+'.xml')
-            if response == 'FALSE':
-                wx.MessageBox('Download Error', 'Error', 
-                wx.OK | wx.ICON_ERROR)
-            else:
-                root = ElementTree.fromstring(open(self.userName.GetValue() + ".xml").read())
-                node_find = root.find('login')
-                pwd_txt = ''.join( [ str(x) for x in node_find.attrib.values()])
-                passwd0 = pc.decrypt(pwd_txt)
-                if self.passWord.GetValue()==passwd0:
+            db = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat" )
+            cursor = db.cursor()
+            sql = "SELECT password FROM user WHERE name = '%s'"%(self.userName.GetValue())
+            try:
+               cursor.execute(sql)
+               results = cursor.fetchall()
+               for row in results:
+                 password = row[0]
+            except:
+                wx.MessageBox('Unable to fecth data', 'Try it again', 
+                wx.OK | wx.ICON_ERROR)      
+            db.close()
+            passwd0 = pc.decrypt(password)
+            if self.passWord.GetValue()==passwd0:
+                    try:
+                        conn = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat");
+                        cursor = conn.cursor()
+                        cursor.execute("SELECT Data FROM friendlist WHERE name = '%s'"%(self.userName.GetValue()))
+                        fout = open(self.userName.GetValue() + '.xml', 'wb')
+                        fout.write(cursor.fetchone()[0])
+                        fout.close()
+                        cursor.close()
+                        conn.close()
+                    except IOError, e:
+                          wx.MessageBox('Error %d: %s' % (e.args[0], e.args[1]), 'Try it again', 
+                          wx.OK | wx.ICON_ERROR)
                     #urllib2.urlopen('http://chat-tyl.coding.io/user_log?info=User___'+self.userName.GetValue()+'___Login')
                     wx.MessageBox('Login Successful', 'Information', 
                     wx.OK | wx.ICON_INFORMATION)
                     self.Hide()
                     frame = FriendList.MyFrame(None, id=-1, title="Friend List",user=self.userName.GetValue() + '.xml',un=self.userName.GetValue())
                     frame.Show(True)
-                else:
+            else:
                     wx.MessageBox('Your Password is wrong', 'Try it again', 
-                    wx.OK | wx.ICON_ERROR) 
+                    wx.OK | wx.ICON_ERROR)         
 if __name__ == '__main__':
     pc = prpcrypt('keyskeyskeyskeys')
     app = wx.App()
