@@ -36,7 +36,6 @@ class myapp(wx.App):
         rc = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
         ps = rc.pubsub()
         ps.subscribe([username])
-        #user = un_g+self.tinput.GetValue() 
         send_dic = {
          'type': 'p2pchat-in-line',
          'user': username,
@@ -58,7 +57,7 @@ class myapp(wx.App):
                        now = datetime.datetime.now()
                        self.tshow.SetDefaultStyle(wx.TextAttr("BLUE"))
                        wx.CallAfter(self.tshow.AppendText, "User:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
-                       sleep(0.5)
+                       sleep(0.1)
                        self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
                        wx.CallAfter(self.tshow.AppendText, text_json['content'] + "\n")
 

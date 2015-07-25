@@ -63,7 +63,7 @@ class LoginFrame(wx.Frame):
                     wx.MessageBox('Login Successful', 'Information', 
                     wx.OK | wx.ICON_INFORMATION)
                     self.Hide()
-                    frame = FriendList.MyFrame(None, id=-1, title="Friend List",user=self.userName.GetValue() + '.xml',un=self.userName.GetValue())
+                    frame = FriendList.MyFrame(None, id=-1, title=self.userName.GetValue() + "'s Friend List",user=self.userName.GetValue() + '.xml',un=self.userName.GetValue())
                     frame.Show(True)
             else:
                     wx.MessageBox('Your Password is wrong', 'Try it again', 
