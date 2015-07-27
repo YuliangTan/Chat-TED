@@ -12,6 +12,7 @@ from xml.etree import ElementTree
 from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 import MySQLdb
+import simplejson as json
 class prpcrypt():
     def __init__(self, key):
         self.key = key
@@ -44,18 +45,20 @@ class LoginFrame(wx.Frame):
             except:
                 wx.MessageBox('Unable to fecth data', 'Try it again', 
                 wx.OK | wx.ICON_ERROR)      
-            db.close()
+            #db.close()
             passwd0 = pc.decrypt(password)
             if self.passWord.GetValue()==passwd0:
                     try:
-                        conn = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat");
-                        cursor = conn.cursor()
+                        #conn = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat");
+                        #cursor = conn.cursor()
                         cursor.execute("SELECT Data FROM friendlist WHERE name = '%s'"%(self.userName.GetValue()))
-                        fout = open(self.userName.GetValue() + '.xml', 'wb')
-                        fout.write(cursor.fetchone()[0])
-                        fout.close()
+                        #fout = open(self.userName.GetValue() + '.xml', 'wb')
+                        #fout.write(cursor.fetchone()[0])
+                        #fout.close()
+                        data = json.loads(cursor.fetchone()[0])
                         cursor.close()
-                        conn.close()
+                        #conn.close()
+                        db.close()
                     except IOError, e:
                           wx.MessageBox('Error %d: %s' % (e.args[0], e.args[1]), 'Try it again', 
                           wx.OK | wx.ICON_ERROR)
@@ -63,7 +66,7 @@ class LoginFrame(wx.Frame):
                     wx.MessageBox('Login Successful', 'Information', 
                     wx.OK | wx.ICON_INFORMATION)
                     self.Hide()
-                    frame = FriendList.MyFrame(None, id=-1, title=self.userName.GetValue() + "'s Friend List",user=self.userName.GetValue() + '.xml',un=self.userName.GetValue())
+                    frame = FriendList.MyFrame(None, id=-1, title=self.userName.GetValue() + "'s Friend List",user=data,un=self.userName.GetValue())
                     frame.Show(True)
             else:
                     wx.MessageBox('Your Password is wrong', 'Try it again', 
