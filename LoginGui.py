@@ -7,8 +7,6 @@ import urllib2
 import sys
 import ssl
 import FriendList
-import Axel
-from xml.etree import ElementTree
 from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 import MySQLdb
@@ -36,7 +34,7 @@ class LoginFrame(wx.Frame):
     def login(self, event):
             db = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat" )
             cursor = db.cursor()
-            sql = "SELECT password FROM user WHERE name = '%s'"%(self.userName.GetValue())
+            sql = "SELECT password FROM user WHERE name = '%s' LIMIT 1"%(self.userName.GetValue())
             try:
                cursor.execute(sql)
                results = cursor.fetchall()
@@ -51,7 +49,7 @@ class LoginFrame(wx.Frame):
                     try:
                         #conn = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat");
                         #cursor = conn.cursor()
-                        cursor.execute("SELECT Data FROM friendlist WHERE name = '%s'"%(self.userName.GetValue()))
+                        cursor.execute("SELECT Data FROM friendlist WHERE name = '%s' LIMIT 1"%(self.userName.GetValue()))
                         #fout = open(self.userName.GetValue() + '.xml', 'wb')
                         #fout.write(cursor.fetchone()[0])
                         #fout.close()
