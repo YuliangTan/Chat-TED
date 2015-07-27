@@ -6,12 +6,9 @@ from flask import abort
 from datetime import datetime
 import moment
 from flask import Flask
-from flask_socketio import SocketIO, emit
+import MySQLdb
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
-socketio.run(app)
 
 @app.route('/')
 def root():
@@ -34,8 +31,7 @@ def post():
         fo.write("\n")
     return request.args.get('info')
 
-@socketio.on('connect')
-def test_message(message):
-    currentSocketId = request.namespace.socket.sessid
-    print currentSocketId
-    emit('my response', {'data': 'got it!'})
+#@app.route('/password')
+#def password():
+   #db = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat" )
+   #cursor = db.cursor()
