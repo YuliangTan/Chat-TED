@@ -11,6 +11,11 @@ from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 import MySQLdb
 import simplejson as json
+import gettext
+import locale
+if locale.getdefaultlocale()[0] == 'zh_CN':
+    gettext.install('messages', './locale', unicode=False)
+    gettext.translation('messages', './locale', languages=['cn']).install(True)
 class prpcrypt():
     def __init__(self, key):
         self.key = key
@@ -24,14 +29,14 @@ class LoginFrame(wx.Frame):
         wx.Frame.__init__(self, parent, id, title)
         self.SetSize(size)
         self.Center()
-        self.passWordLabel = wx.StaticText(self, label = "UserName", pos = (10, 50), size = (120, 25))
-        self.userNameLabel = wx.StaticText(self, label = "Password", pos = (40, 100), size = (120, 25))
-        self.userName = wx.TextCtrl(self, pos = (120, 47), size = (150, 25))
-        self.passWord= wx.TextCtrl(self, pos = (120, 97), size = (150, 25),style=wx.TE_PASSWORD)
-        self.loginButton = wx.Button(self, label = 'Login', pos = (80, 145), size = (130, 30))
-        self.loginButton.Bind(wx.EVT_BUTTON, self.login)
+        self.passWordLabel = wx.StaticText(self, label = _("UserName"), pos = (30, 50), size = (120, 25))
+        self.userNameLabel = wx.StaticText(self, label = _("Password"), pos = (30, 100), size = (120, 25))
+        self.userName = wx.TextCtrl(self, pos = (100, 47), size = (150, 25))
+        self.passWord= wx.TextCtrl(self, pos = (100, 97), size = (150, 25),style=wx.TE_PASSWORD)
+        self.loginButton = wx.Button(self, label = _('Login'), pos = (80, 145), size = (130, 30))
+        self.loginButton.Bind(wx.EVT_BUTTON,self.login)
         self.Show()
-    def login(self, event):
+    def login(self,evt):
             db = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat" )
             cursor = db.cursor()
             sql = "SELECT password FROM user WHERE name = '%s' LIMIT 1"%(self.userName.GetValue())
@@ -41,18 +46,13 @@ class LoginFrame(wx.Frame):
                for row in results:
                  password = row[0]
             except:
-                wx.MessageBox('Unable to fecth data', 'Try it again', 
+                wx.MessageBox(_('Unable to fecth data'), _('Try it again'), 
                 wx.OK | wx.ICON_ERROR)      
             #db.close()
             passwd0 = pc.decrypt(password)
             if self.passWord.GetValue()==passwd0:
                     try:
-                        #conn = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat");
-                        #cursor = conn.cursor()
                         cursor.execute("SELECT Data FROM friendlist WHERE name = '%s' LIMIT 1"%(self.userName.GetValue()))
-                        #fout = open(self.userName.GetValue() + '.xml', 'wb')
-                        #fout.write(cursor.fetchone()[0])
-                        #fout.close()
                         data = json.loads(cursor.fetchone()[0])
                         cursor.close()
                         #conn.close()
@@ -61,16 +61,16 @@ class LoginFrame(wx.Frame):
                           wx.MessageBox('Error %d: %s' % (e.args[0], e.args[1]), 'Try it again', 
                           wx.OK | wx.ICON_ERROR)
                     #urllib2.urlopen('http://chat-tyl.coding.io/user_log?info=User___'+self.userName.GetValue()+'___Login')
-                    wx.MessageBox('Login Successful', 'Information', 
+                    wx.MessageBox(_('Login Successful'), _('Information'), 
                     wx.OK | wx.ICON_INFORMATION)
                     self.Hide()
-                    frame = FriendList.MyFrame(None, id=-1, title=self.userName.GetValue() + "'s Friend List",user=data,un=self.userName.GetValue())
+                    frame = FriendList.MyFrame(None, id=-1, title=_("Friend List"),user=data,un=self.userName.GetValue())
                     frame.Show(True)
             else:
-                    wx.MessageBox('Your Password is wrong', 'Try it again', 
+                    wx.MessageBox(_('Your Password is wrong'), _('Try it again'), 
                     wx.OK | wx.ICON_ERROR)         
 if __name__ == '__main__':
     pc = prpcrypt('keyskeyskeyskeys')
     app = wx.App()
-    LoginFrame(None, -1, title = "Login", size = (280, 200))
+    LoginFrame(None, -1, title = _("Login"), size = (280, 200))
     app.MainLoop()

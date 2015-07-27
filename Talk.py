@@ -7,7 +7,7 @@ import simplejson as json
 from time import sleep
 class myapp(wx.App):
     def __init__(self,user_name,un):
-        frame = wx.Frame(None,title="With " + user_name + " Talking",pos = (100,50),size = (400,300))
+        frame = wx.Frame(None,title=_("With ") + user_name + _(" Talking"),pos = (100,50),size = (400,300))
         global username
         username=user_name
         self.bkg = wx.Panel(frame)
@@ -15,7 +15,7 @@ class myapp(wx.App):
         un_g=un
         self.tshow = wx.TextCtrl(self.bkg,style = wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY)
         self.tinput = wx.TextCtrl(self.bkg)
-        self.bt = wx.Button(self.bkg,label = "Send")      
+        self.bt = wx.Button(self.bkg,label = _("Send"))      
         self.box1 = wx.BoxSizer()
         self.box1.Add(self.tinput,proportion = 1,flag = wx.EXPAND)
         self.box1.Add(self.bt,proportion = 0)        
@@ -30,7 +30,7 @@ class myapp(wx.App):
     def btaction(self,evt):
         now = datetime.datetime.now()
         self.tshow.SetDefaultStyle(wx.TextAttr("GREEN"))
-        self.tshow.AppendText("I:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
+        self.tshow.AppendText(_("I:")+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
         self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
         self.tshow.AppendText(self.tinput.GetValue() + "\n")
         rc = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
@@ -56,7 +56,7 @@ class myapp(wx.App):
                    if text_json['user'] == un_g: 
                        now = datetime.datetime.now()
                        self.tshow.SetDefaultStyle(wx.TextAttr("BLUE"))
-                       wx.CallAfter(self.tshow.AppendText, "User:"+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
+                       wx.CallAfter(self.tshow.AppendText, _("User:")+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
                        sleep(0.1)
                        self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
                        wx.CallAfter(self.tshow.AppendText, text_json['content'] + "\n")

@@ -10,8 +10,8 @@ class MyFrame(wx.Frame):
         Talk.myapp(user_name=self.tree.GetItemText(event.GetItem()),un=un)
     def OnClose(self, event,un):
         dlg = wx.MessageDialog(self, 
-            "Do you really want to close this application?",
-            "Confirm Exit", wx.OK|wx.CANCEL|wx.ICON_QUESTION)
+            _("Do you really want to close this application?"),
+            _("Confirm Exit"), wx.OK|wx.CANCEL|wx.ICON_QUESTION)
         result = dlg.ShowModal()
         dlg.Destroy()
         if result == wx.ID_OK:
