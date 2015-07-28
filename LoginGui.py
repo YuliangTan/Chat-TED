@@ -39,7 +39,7 @@ class LoginFrame(wx.Frame):
     def login(self,evt):
             db=MySQLdb.connect(host="sql6.freesqldatabase.com",user="sql685198",passwd="jH8*bX3*",db="sql685198",port=3306 )
             cursor = db.cursor()
-            sql = "SELECT password FROM user WHERE name = '%s' LIMIT 1"%(self.userName.GetValue())
+            sql = "SELECT uncompress(password) FROM user WHERE name = '%s' LIMIT 1"%(self.userName.GetValue())
             try:
                cursor.execute(sql)
                results = cursor.fetchall()
@@ -56,7 +56,7 @@ class LoginFrame(wx.Frame):
             passwd0 = pc.decrypt(password)
             if self.passWord.GetValue()==passwd0:
                     try:
-                        cursor.execute("SELECT Data FROM friendlist WHERE name = '%s' LIMIT 1"%(self.userName.GetValue()))
+                        cursor.execute("SELECT uncompress(Data) FROM friendlist WHERE name = '%s' LIMIT 1"%(self.userName.GetValue()))
                         data = json.loads(cursor.fetchone()[0])
                         cursor.close()
                         #conn.close()
