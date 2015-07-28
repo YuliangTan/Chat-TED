@@ -37,14 +37,18 @@ class LoginFrame(wx.Frame):
         self.loginButton.Bind(wx.EVT_BUTTON,self.login)
         self.Show()
     def login(self,evt):
-            db = MySQLdb.connect("db4free.net","tylchat","22842218","tylchat" )
+            db=MySQLdb.connect(host="sql6.freesqldatabase.com",user="sql685198",passwd="jH8*bX3*",db="sql685198",port=3306 )
             cursor = db.cursor()
             sql = "SELECT password FROM user WHERE name = '%s' LIMIT 1"%(self.userName.GetValue())
             try:
                cursor.execute(sql)
                results = cursor.fetchall()
-               for row in results:
-                 password = row[0]
+               if results:
+                   for row in results:
+                     password = row[0]
+               else:
+                   wx.MessageBox(_('Unable to fecth data'), _('Try it again'), 
+                   wx.OK | wx.ICON_ERROR)  
             except:
                 wx.MessageBox(_('Unable to fecth data'), _('Try it again'), 
                 wx.OK | wx.ICON_ERROR)      
@@ -64,7 +68,7 @@ class LoginFrame(wx.Frame):
                     wx.MessageBox(_('Login Successful'), _('Information'), 
                     wx.OK | wx.ICON_INFORMATION)
                     self.Hide()
-                    frame = FriendList.MyFrame(None, id=-1, title=_("Friend List"),user=data,un=self.userName.GetValue())
+                    frame = FriendList.MyFrame(None, id=-1, title=self.userName.GetValue() + _("'s Friend List"),user=data,un=self.userName.GetValue())
                     frame.Show(True)
             else:
                     wx.MessageBox(_('Your Password is wrong'), _('Try it again'), 
