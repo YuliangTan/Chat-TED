@@ -2,6 +2,7 @@
 # encoding: utf-8
 import os
 import wx
+from wx.lib.pubsub import Publisher as pub
 import sys
 import ssl
 import FriendList
@@ -36,7 +37,13 @@ class LoginFrame(wx.Frame):
         self.passWord= wx.TextCtrl(self, pos = (100, 97), size = (150, 25),style=wx.TE_PASSWORD)
         self.loginButton = wx.Button(self, label = _('Login'), pos = (80, 145), size = (130, 30))
         self.loginButton.Bind(wx.EVT_BUTTON,self.login_thread)
-        self.Show()
+        pub.subscribe(self.__Friend_list, 'list.show')
+        self.Show()   
+    def __Friend_list(self, info):
+       #print 'Object', message.data, 'is added'
+       self.Hide()
+       frame = FriendList.MyFrame(None, id=-1, title=_("Friend List"),user=info.data,un=self.userName.GetValue())
+       frame.Show(True)
     def login_thread(self,event):
             thread.start_new_thread(self.login, ())
             self.loginButton.Disable()
@@ -80,17 +87,15 @@ class LoginFrame(wx.Frame):
                           wx.OK | wx.ICON_ERROR) 
                           wx.CallAfter(self.loginButton.Enable)     
                     #urllib2.urlopen('http://chat-tyl.coding.io/user_log?info=User___'+self.userName.GetValue()+'___Login')
+                    time.sleep(0.1)
                     wx.CallAfter(Notify.init,"Chat-TYL")
-                    wx.CallAfter(Notify.init ,"Chat-TYL") 
                     bubble_notify = Notify.Notification.new (_("Information"),_("Login Successful"),"file://" + os.path.abspath(os.path.curdir) + "/Chat-TYL.ico")
                     wx.CallAfter(bubble_notify.show) 
-                    wx.CallAfter(self.Hide)
-                    time.sleep(0.1)
-                    frame = FriendList.MyFrame(None, id=-1, title=_("Friend List"),user=data,un=self.userName.GetValue())
-                    wx.CallAfter(frame.Show,True)
+                    wx.CallAfter(pub.sendMessage,'list.show', data)
                  else:
                      wx.CallAfter(wx.MessageBox,_('Your Password is wrong'), _('Try it again'), 
                      wx.OK | wx.ICON_ERROR)
+                     wx.CallAfter(self.loginButton.Enable)    
 if __name__ == '__main__':
     pc = prpcrypt('keyskeyskeyskeys')
     app = wx.App()
