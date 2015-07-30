@@ -10,7 +10,9 @@ from binascii import b2a_hex, a2b_hex
 import MySQLdb
 import simplejson as json
 from gi.repository import Notify
+import thread
 import gettext
+import time
 import locale
 if locale.getdefaultlocale()[0] == 'zh_CN':
     gettext.install('messages', './locale', unicode=False)
@@ -33,16 +35,21 @@ class LoginFrame(wx.Frame):
         self.userName = wx.TextCtrl(self, pos = (100, 47), size = (150, 25))
         self.passWord= wx.TextCtrl(self, pos = (100, 97), size = (150, 25),style=wx.TE_PASSWORD)
         self.loginButton = wx.Button(self, label = _('Login'), pos = (80, 145), size = (130, 30))
-        self.loginButton.Bind(wx.EVT_BUTTON,self.login)
+        self.loginButton.Bind(wx.EVT_BUTTON,self.login_thread)
         self.Show()
-    def login(self,evt):
+    def login_thread(self,event):
+            thread.start_new_thread(self.login, ())
+            self.loginButton.Disable()
+    def login(self):
             if not self.userName.GetValue():
-                   wx.MessageBox(_('Please enter the username'), _('Error'), 
+                   wx.CallAfter(wx.MessageBox,_('Please enter the username'), _('Error'), 
                    wx.OK | wx.ICON_ERROR)
+                   wx.CallAfter(self.loginButton.Enable)
             elif not self.passWord.GetValue():
-                    wx.MessageBox(_('Please enter the password'), _('Error'), 
-                    wx.OK | wx.ICON_ERROR) 
-            else:                 
+                    wx.CallAfter(wx.MessageBox,_('Please enter the password'), _('Error'), 
+                    wx.OK | wx.ICON_ERROR)     
+                    wx.CallAfter(self.loginButton.Enable)      
+            else:
                  try:
                      db=MySQLdb.connect(host="sql6.freesqldatabase.com",user="sql685198",passwd="jH8*bX3*",db="sql685198",port=3306 )
                      cursor = db.cursor()
@@ -53,11 +60,13 @@ class LoginFrame(wx.Frame):
                          for row in results:
                                  password = row[0]
                      else:
-                         wx.MessageBox(_('Unable to fecth data,Please check your username'), _('Try it again'), 
-                         wx.OK | wx.ICON_ERROR)  
+                         wx.CallAfter(wx.MessageBox,_('Unable to fecth data,Please check your username'),_('Try it again'), 
+                         wx.OK | wx.ICON_ERROR)
+                         wx.CallAfter(self.loginButton.Enable)                   
                  except MySQLdb.Error, e:
-                       wx.MessageBox('Error %d: %s' % (e.args[0], e.args[1]), _('Try it again'), 
-                       wx.OK | wx.ICON_ERROR)  
+                       wx.CallAfter(wx.MessageBox,'Error %d: %s' % (e.args[0], e.args[1]),_('Try it again'), 
+                       wx.OK | wx.ICON_ERROR)
+                       wx.CallAfter(self.loginButton.Enable)                                   
                  passwd0 = pc.decrypt(password)
                  if self.passWord.GetValue()==passwd0:
                     try:
@@ -66,21 +75,23 @@ class LoginFrame(wx.Frame):
                         cursor.close()
                         #conn.close()
                         db.close()
-                    except IOError, e:
-                          wx.MessageBox('Error %d: %s' % (e.args[0], e.args[1]), 'Try it again', 
-                          wx.OK | wx.ICON_ERROR)
+                    except IOError, e:      
+                          wx.CallAfter(wx.MessageBox,'Error %d: %s' % (e.args[0], e.args[1]),_('Try it again'), 
+                          wx.OK | wx.ICON_ERROR) 
+                          wx.CallAfter(self.loginButton.Enable)     
                     #urllib2.urlopen('http://chat-tyl.coding.io/user_log?info=User___'+self.userName.GetValue()+'___Login')
                     Notify.init ("Chat-TYL")
+                    wx.CallAfter(Notify.init ,"Chat-TYL") 
                     bubble_notify = Notify.Notification.new (_("Information"),_("Login Successful"),"file://" + os.path.abspath(os.path.curdir) + "/Chat-TYL.ico")
-                    bubble_notify.show ()  
-                    self.Hide()
+                    wx.CallAfter(bubble_notify.show) 
+                    wx.CallAfter(self.Hide)
                     frame = FriendList.MyFrame(None, id=-1, title=_("Friend List"),user=data,un=self.userName.GetValue())
-                    frame.Show(True)
+                    wx.CallAfter(frame.Show,True)
                  else:
                      wx.MessageBox(_('Your Password is wrong'), _('Try it again'), 
-                     wx.OK | wx.ICON_ERROR)         
+                     wx.OK | wx.ICON_ERROR)  
 if __name__ == '__main__':
     pc = prpcrypt('keyskeyskeyskeys')
     app = wx.App()
-    LoginFrame(None, -1, title = _("Login"), size = (280, 200))
+    LoginFrame(None, -1, title = _("Login"), size = (280, 180))
     app.MainLoop()
