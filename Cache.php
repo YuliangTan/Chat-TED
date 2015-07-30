@@ -1,6 +1,6 @@
 <?php
 include 'filecache.php';
-$cache = new FileCache();
+$cache = new FileCache($path = "cache", $max_path = 100, $max_file = 50000, $gc_probality = 100);
 
 //数据缓存
 $cache->set('test', 'file cache test', 3600); // key, value, expired
