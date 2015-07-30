@@ -4,7 +4,7 @@ $cache = new FileCache($path = "/home/vcap/fs/2ad834759b976e6", $max_path = 100,
 
 //数据缓存
 $cache->set('test', 'file cache test', 3600); // key, value, expired
-$cache->get('test');
+echo $cache->get('test');
 #$cache->delete('test');
 
 //片段缓存
