@@ -80,16 +80,17 @@ class LoginFrame(wx.Frame):
                           wx.OK | wx.ICON_ERROR) 
                           wx.CallAfter(self.loginButton.Enable)     
                     #urllib2.urlopen('http://chat-tyl.coding.io/user_log?info=User___'+self.userName.GetValue()+'___Login')
-                    Notify.init ("Chat-TYL")
+                    wx.CallAfter(Notify.init,"Chat-TYL")
                     wx.CallAfter(Notify.init ,"Chat-TYL") 
                     bubble_notify = Notify.Notification.new (_("Information"),_("Login Successful"),"file://" + os.path.abspath(os.path.curdir) + "/Chat-TYL.ico")
                     wx.CallAfter(bubble_notify.show) 
                     wx.CallAfter(self.Hide)
+                    time.sleep(0.1)
                     frame = FriendList.MyFrame(None, id=-1, title=_("Friend List"),user=data,un=self.userName.GetValue())
                     wx.CallAfter(frame.Show,True)
                  else:
-                     wx.MessageBox(_('Your Password is wrong'), _('Try it again'), 
-                     wx.OK | wx.ICON_ERROR)  
+                     wx.CallAfter(wx.MessageBox,_('Your Password is wrong'), _('Try it again'), 
+                     wx.OK | wx.ICON_ERROR)
 if __name__ == '__main__':
     pc = prpcrypt('keyskeyskeyskeys')
     app = wx.App()
