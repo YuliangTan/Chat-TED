@@ -5,10 +5,15 @@ import redis
 import thread
 import simplejson as json
 from time import sleep
+import urllib2
 class myapp(wx.Frame):
     def OnClose(self,evt):
-       re = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
-       re.delete(un_g + '-' + username)
+       #re = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
+       #re.delete(un_g + '-' + username)
+       try:
+           s = urllib2.urlopen("http://chat-tyl.coding.io/check_win.php?name="+ un_g + "-" + username +"&del=OK&check=NO").read()
+       except urllib2.HTTPError,e:
+          print e.code
        self.Destroy()
     def __init__(self, parent, id,title,user_name,un,addcon):
         wx.Frame.__init__(self,parent,id,title,wx.DefaultPosition,wx.Size(400,300))
@@ -50,7 +55,11 @@ class myapp(wx.Frame):
         self.tinput.SetValue("")
     def receive(self):
        rd = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
-       rd.set(un_g + '-' + username,'OK')
+       #rd.set(un_g + '-' + username,'OK')
+       try:
+           s = urllib2.urlopen("http://chat-tyl.coding.io/check_win.php?name="+ un_g + "-" + username +"&txt=OK&del=NO&check=NO").read()
+       except urllib2.HTTPError,e:
+          print e.code
        ps = rd.pubsub()
        #ps.subscribe(['test', 'user'])
        ps.subscribe([un_g])
@@ -67,8 +76,11 @@ class myapp(wx.Frame):
                        wx.CallAfter(self.tshow.AppendText, text_json['content'] + "\n")
     def send(self): 
         rc = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
-        check_win=rc.get(username + '-' + un_g)
-        if check_win is None:
+        try:
+            s = urllib2.urlopen("http://chat-tyl.coding.io/check_win.php?name="+ username + "-" + un_g +"&del=NO&check=OK").read()
+        except urllib2.HTTPError,e:
+           print e.code
+        if s == "":
              ps = rc.pubsub()
              ps.subscribe([username])
              send_dic = {
