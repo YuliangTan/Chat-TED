@@ -1,7 +1,9 @@
 # -*- coding: UTF-8 -*-
 import wx
 import datetime
-import redis
+import pymongo
+from pymongo_pubsub import Publisher
+from pymongo_pubsub import Subscriber
 import thread
 import simplejson as json
 from time import sleep
@@ -11,7 +13,7 @@ class myapp(wx.Frame):
        #re = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
        #re.delete(un_g + '-' + username)
        try:
-           s = urllib2.urlopen("http://chat-tyl.coding.io/check_win.php?name="+ un_g + "-" + username +"&del=OK&check=NO").read()
+           s = urllib2.urlopen("http://chat-tyl.coding.io/read_cache.php?name="+ un_g + "-" + username +"&del=OK&check=NO").read()
        except urllib2.HTTPError,e:
           print e.code
        self.Destroy()
@@ -53,52 +55,50 @@ class myapp(wx.Frame):
         content = self.tinput.GetValue()
         thread.start_new_thread(self.send, ())
         self.tinput.SetValue("")
+    def put_text(self,data): 
+               text_json= json.loads(data['message'])
+               if text_json['type'] == 'p2pchat-in-line':
+                           now = datetime.datetime.now()
+                           self.tshow.SetDefaultStyle(wx.TextAttr("BLUE"))
+                           wx.CallAfter(self.tshow.AppendText, _("User:")+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
+                           sleep(0.1)
+                           self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
+                           wx.CallAfter(self.tshow.AppendText, text_json['content'] + "\n")
     def receive(self):
-       rd = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
-       #rd.set(un_g + '-' + username,'OK')
        try:
-           s = urllib2.urlopen("http://chat-tyl.coding.io/check_win.php?name="+ un_g + "-" + username +"&txt=OK&del=NO&check=NO").read()
+           s = urllib2.urlopen("http://chat-tyl.coding.io/read_cache.php?name="+ un_g + "-" + username +"&txt=OK&del=NO&check=NO").read()
        except urllib2.HTTPError,e:
           print e.code
-       ps = rd.pubsub()
-       #ps.subscribe(['test', 'user'])
-       ps.subscribe([un_g])
-       for item in ps.listen():
-          if item['type'] == 'message':
-               text_json= json.loads(item['data'])
-               if text_json['type'] == 'p2pchat-in-line':
-                   if text_json['user'] == un_g: 
-                       now = datetime.datetime.now()
-                       self.tshow.SetDefaultStyle(wx.TextAttr("BLUE"))
-                       wx.CallAfter(self.tshow.AppendText, _("User:")+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
-                       sleep(0.1)
-                       self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
-                       wx.CallAfter(self.tshow.AppendText, text_json['content'] + "\n")
+       connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
+       i = 1
+       while (i == 1):
+             subscriber = Subscriber(connection, un_g,callback=self.put_text ,
+                      matching={'send': un_g})
+             subscriber.listen()
     def send(self): 
-        rc = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
+        connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
+        #database = connection.tylchat_collection.pubsub_db
+        publisher = Publisher(connection, username)
         try:
-            s = urllib2.urlopen("http://chat-tyl.coding.io/check_win.php?name="+ username + "-" + un_g +"&del=NO&check=OK").read()
+            s = urllib2.urlopen("http://chat-tyl.coding.io/read_cache.php?name="+ username + "-" + un_g +"&del=NO&check=OK").read()
         except urllib2.HTTPError,e:
            print e.code
         if s == "":
-             ps = rc.pubsub()
-             ps.subscribe([username])
              send_dic = {
              'type': 'info-in-line',
-             'user': username,
              'send': un_g,
+             'user' : username,
              'content': content 
              }
              user = json.dumps(send_dic)
-             rc.publish(username, user)
+             publisher.push({'message': user, 'send': 'info-chat'})
         else:
              send_dic = {
              'type': 'p2pchat-in-line',
-             'user': username,
              'content': content 
              }
              user = json.dumps(send_dic)
-             rc.publish(username, user)                     
+             publisher.push({'message': user, 'send': username})          
 #if __name__ == '__main__':
     #app = myapp()
     #app.MainLoop()

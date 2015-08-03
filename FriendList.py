@@ -4,13 +4,15 @@ import os
 import wx
 import sys
 import Talk
-import redis
+import pymongo
+from pymongo_pubsub import Publisher
+from pymongo_pubsub import Subscriber
 import thread
 import simplejson as json
 from gi.repository import Notify
-def default_cb(n, action,txt):
+def default_cb(n, action,data):
     assert action == "view_text"
-    Talk.myapp(None,id=-1,title=_("With ") + txt['send'] + _(" Talking"),user_name=txt['send'],un=txt['user'],addcon=txt['content'])
+    Talk.myapp(None,id=-1,title=_("With ") + data['send'] + _(" Talking"),user_name=data['send'],un=data['user'],addcon=data['content'])
     n.close()
 class MyFrame(wx.Frame):
     def OnClickLeftKey(self, event,un):
@@ -22,6 +24,8 @@ class MyFrame(wx.Frame):
         result = dlg.ShowModal()
         dlg.Destroy()
         if result == wx.ID_OK:
+            connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
+            connection.drop_collection(un)
             sys.exit()
     def __init__(self, parent, id, title,user,un):
         wx.Frame.__init__(self, parent, id, title,
@@ -46,17 +50,21 @@ class MyFrame(wx.Frame):
         global un_g
         un_g = un
         thread.start_new_thread(self.receive, ())
+    def put_info(self,data):
+       text_json= json.loads(data['message'])
+       Notify.init ("Chat-TYL")
+       n = Notify.Notification.new (text_json['send'] + _(" say:"),text_json['content'],"file://" + os.path.abspath(os.path.curdir) + "/Chat-TYL.ico")
+       #n.add_action("view_text", _("Click me to see"), lambda n,action,data =text_json: default_cb(n,action,data))
+       n.show ()  
     def receive(self):
-       rd = redis.Redis(host='pub-redis-19834.us-east-1-4.5.ec2.garantiadata.com',port=19834,password='22842218')
-       ps = rd.pubsub()
-       #ps.subscribe(['test', 'user'])
-       ps.subscribe([un_g])
-       for item in ps.listen():
-          if item['type'] == 'message':
-               text_json= json.loads(item['data'])
-               if text_json['type'] == 'info-in-line':
-                   if text_json['user'] == un_g: 
-                       Notify.init ("Chat-TYL")
-                       n = Notify.Notification.new (text_json['send'] + _(" say:"),text_json['content'],"file://" + os.path.abspath(os.path.curdir) + "/Chat-TYL.ico")
-                       n.add_action("view_text", _("Click me to see"), lambda n,action,txt =text_json: default_cb(n,action,txt))
-                       n.show ()  
+        connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
+        if un_g not in connection.collection_names():
+            connection.create_collection(un_g,
+                                                    capped=True,
+                                                    size=1000000,
+                                                    max=None) 
+        i = 1
+        while (i == 1):
+            subscriber = Subscriber(connection, un_g,callback=self.put_info ,
+                        matching={'send': 'info-chat'})
+            subscriber.listen()
