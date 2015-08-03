@@ -46,21 +46,25 @@ class myapp(wx.Frame):
         thread.start_new_thread(self.receive, ())
         self.Show()
     def btaction(self,evt):
-        now = datetime.datetime.now()
-        self.tshow.SetDefaultStyle(wx.TextAttr("GREEN"))
-        self.tshow.AppendText(_("I:")+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
-        self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
-        self.tshow.AppendText(self.tinput.GetValue() + "\n")
         global content
         content = self.tinput.GetValue()
-        thread.start_new_thread(self.send, ())
-        self.tinput.SetValue("")
+        if content == "":
+             wx.MessageBox(_('Please Enter the text'), _('Try it again'),
+                     wx.OK | wx.ICON_ERROR)
+        else:
+            now = datetime.datetime.now()
+            self.tshow.SetDefaultStyle(wx.TextAttr("GREEN"))
+            self.tshow.AppendText(_("I:")+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
+            self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
+            self.tshow.AppendText(self.tinput.GetValue() + "\n")
+            thread.start_new_thread(self.send, ())
+            self.tinput.SetValue("")
     def put_text(self,data): 
                text_json= json.loads(data['message'])
                if text_json['type'] == 'p2pchat-in-line':
                            now = datetime.datetime.now()
                            self.tshow.SetDefaultStyle(wx.TextAttr("BLUE"))
-                           wx.CallAfter(self.tshow.AppendText, _("User:")+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")
+                           wx.CallAfter(self.tshow.AppendText, _("User:")+text_json['time']+"\n")
                            sleep(0.1)
                            self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
                            wx.CallAfter(self.tshow.AppendText, text_json['content'] + "\n")
@@ -83,11 +87,13 @@ class myapp(wx.Frame):
             s = urllib2.urlopen("http://chat-tyl.coding.io/read_cache.php?name="+ username + "-" + un_g +"&del=NO&check=OK").read()
         except urllib2.HTTPError,e:
            print e.code
+        now = datetime.datetime.now()
         if s == "":
              send_dic = {
              'type': 'info-in-line',
              'send': un_g,
              'user' : username,
+             'time': now.strftime('%Y-%m-%d %H:%M:%S'),
              'content': content 
              }
              user = json.dumps(send_dic)
@@ -95,7 +101,8 @@ class myapp(wx.Frame):
         else:
              send_dic = {
              'type': 'p2pchat-in-line',
-             'content': content 
+             'content': content ,
+             'time': now.strftime('%Y-%m-%d %H:%M:%S')
              }
              user = json.dumps(send_dic)
              publisher.push({'message': user, 'send': username})          
