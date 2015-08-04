@@ -24,8 +24,9 @@ class myapp(wx.Frame):
         self.bkg = wx.Panel(self,-1)
         global un_g
         un_g=un
-        self.tshow = wx.TextCtrl(self.bkg,style = wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY)
-        self.tinput = wx.TextCtrl(self.bkg)
+        self.tshow = wx.TextCtrl(self.bkg,style = wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY|wx.TE_RICH2|wx.TE_LINEWRAP)
+        self.tinput = wx.TextCtrl(self.bkg,style = wx.TE_PROCESS_ENTER)
+        self.tinput.Bind(wx.EVT_TEXT_ENTER,self.btaction)
         self.bt = wx.Button(self.bkg,label = _("Send"))      
         self.box1 = wx.BoxSizer()
         self.box1.Add(self.tinput,proportion = 1,flag = wx.EXPAND)
