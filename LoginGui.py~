@@ -101,5 +101,5 @@ class LoginFrame(wx.Frame):
 if __name__ == '__main__':
     pc = prpcrypt('keyskeyskeyskeys')
     app = wx.App()
-    LoginFrame(None, -1, title = _("Login"), size = (280, 200))
+    LoginFrame(None, -1, title = _("Login"), size = (380, 180))
     app.MainLoop()
