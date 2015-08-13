@@ -10,18 +10,15 @@
    if(!$db){
       echo $db->lastErrorMsg();
    } else {
-      echo "Opened database successfully\n";
    }
 
    $sql =<<<EOF
-      SELECT * from USER;
+      SELECT $_GET["content"] from $_GET["db"];
 EOF;
 
    $ret = $db->query($sql);
    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-      echo "NAME = ". $row['NAME'] ."\n";
-      echo "ID = ". $row['PASS'] . "\n";
+      echo $row;
    }
-   echo "Operation done successfully\n";
    $db->close();
 ?>

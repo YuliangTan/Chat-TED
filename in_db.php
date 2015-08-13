@@ -15,7 +15,7 @@
 
    $sql =<<<EOF
       INSERT INTO USER (NAME,PASS)
-      VALUES ('Paul', 'California');
+      VALUES ($_GET["name"], $_GET["pass"]);
 EOF;
 
    $ret = $db->exec($sql);
