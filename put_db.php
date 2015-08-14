@@ -12,13 +12,12 @@
    }
 
    $sql ="SELECT " . "'" . $_GET["content"] . "'" . " from " . 
-"'" . $_GET["db"] . "'" . 
-";";
+"'" . $_GET["db"] . "'" . " WHERE " . $_GET["where"] . "=" . 
+$_GET["where_t"] . ";";
 
    $ret = $db->query($sql);
-   echo $ret;
-   /*while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-      echo $row;
-   }*/
+   while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
+      echo $row[];
+   }
    $db->close();
 ?>
