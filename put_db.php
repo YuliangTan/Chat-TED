@@ -17,7 +17,7 @@ $_GET["where_t"] . ";";
 
    $ret = $db->query($sql);
    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-      echo $row[];
+      echo $row;
    }
    $db->close();
 ?>
