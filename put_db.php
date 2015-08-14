@@ -12,9 +12,8 @@
    } else {
    }
 
-   $sql =<<<EOF
-      SELECT $_GET["content"] from $_GET["db"];
-EOF;
+   $sql ="
+      SELECT $_GET["content"] from $_GET["db"];";
 
    $ret = $db->query($sql);
    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
