@@ -11,11 +11,13 @@
       echo $db->lastErrorMsg();
    }
 
-   $sql ="SELECT " . $_GET["content"] . " from " . $_GET["db"] . ";";
+   $sql ="SELECT " . "'" . $_GET["content"] . "'" . " from " . 
+"'" . $_GET["db"] . "'" . 
+";";
 
    $ret = $db->query($sql);
    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-      echo $row;
+      echo $row[;
    }
    $db->close();
 ?>
