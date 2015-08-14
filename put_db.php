@@ -13,7 +13,7 @@
    }
 
    $sql ="
-      SELECT $_GET["content"] from $_GET["db"];";
+      SELECT" . $_GET["content"] . "from" . $_GET["db"] . ";";
 
    $ret = $db->query($sql);
    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
