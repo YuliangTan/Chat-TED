@@ -16,7 +16,7 @@
 ";";
 
    $ret = $db->query($sql);
-   echo $ret
+   echo $ret;
    /*while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
       echo $row;
    }*/
