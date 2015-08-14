@@ -17,7 +17,7 @@
 
    $ret = $db->query($sql);
    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-      echo $row;
+      echo $row['PASS'];
    }
    $db->close();
 ?>
