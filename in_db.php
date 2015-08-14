@@ -15,7 +15,9 @@
 
    $sql =
       "INSERT INTO USER (NAME,PASS)
-      VALUES (" . $_GET["name"]  . "," . $_GET["pass"] . ");";
+      VALUES (" . "'" . $_GET["name"]  . "'" . "," . "'" . $_GET["pass"] 
+.  "'" .
+");";
 
    $ret = $db->exec($sql);
    if(!$ret){
