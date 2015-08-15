@@ -12,9 +12,7 @@
    } else {
       echo "Opened database successfully\n";
    }
-   $sql =<<<EOF
-      DELETE from USER where NAME='Paul';
-EOF;
+   $sql ="DELETE from USER where NAME" . "=" . $_GET['name'];
    $ret = $db->exec($sql);
    if(!$ret){
      echo $db->lastErrorMsg();
