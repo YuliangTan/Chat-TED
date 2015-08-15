@@ -9,7 +9,8 @@ from pymongo_pubsub import Publisher
 from pymongo_pubsub import Subscriber
 import thread
 import simplejson as json
-from gi.repository import Notify
+#from gi.repository import Notify
+import wx.lib.agw.toasterbox as TB
 def default_cb(n, action,data):
     assert action == "view_text"
     Talk.myapp(None,id=-1,title=_("With ") + data['send'] + _(" Talking"),user_name=data['send'],un=data['user'],addcon=data['content'])
@@ -52,10 +53,12 @@ class MyFrame(wx.Frame):
         thread.start_new_thread(self.receive, ())
     def put_info(self,data):
        text_json= json.loads(data['message'])
-       Notify.init ("Chat-TYL")
-       n = Notify.Notification.new (text_json['send'] + _(" say:"),text_json['content'],"file://" + os.path.abspath(os.path.curdir) + "/Chat-TYL.ico")
+       #Notify.init ("Chat-TYL")
+       #n = Notify.Notification.new (text_json['send'] + _(" 
+#say:"),text_json['content'],"file://" + os.path.abspath(os.path.curdir) 
+#+ "/Chat-TYL.ico")
        #n.add_action("view_text", _("Click me to see"), lambda n,action,data =text_json: default_cb(n,action,data))
-       n.show ()  
+       #n.show ()  
     def receive(self):
         connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
         if un_g not in connection.collection_names():

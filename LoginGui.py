@@ -9,8 +9,10 @@ import FriendList
 from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 #import MySQLdb
+import urllib2
 import simplejson as json
-from gi.repository import Notify
+#from gi.repository import Notify
+import wx.lib.agw.toasterbox as TB
 import thread
 import gettext
 import time
@@ -58,27 +60,16 @@ class LoginFrame(wx.Frame):
                     wx.CallAfter(wx.MessageBox,_('Please enter the password'), _('Error'), 
                     wx.OK | wx.ICON_ERROR)     
                     wx.CallAfter(self.loginButton.Enable)      
-            #else:
+            else:
+              try:
+                passwd = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=PASS&db=USER&where=NAME&where_t=" + self.userName.GetValue()).read()
+              except urllib2.HTTPError,e:
+                wx.CallAfter(wx.MessageBox,_('Unable to fetch data'),_('Error'), wx.OK | wx.ICON_ERROR)
+                wx.CallAfter(self.loginButton.Enable)                                   
+	      passwd0 = pc.decrypt(passwd)
+              if self.passWord.GetValue()==passwd0:
+                 print 'OK'
                  #try:
-                     #db=MySQLdb.connect(host="sql6.freesqldatabase.com",user="sql685198",passwd="jH8*bX3*",db="sql685198",port=3306 )
-                     #cursor = db.cursor()
-                     #sql = "SELECT uncompress(password) FROM user WHERE name = '%s' LIMIT 1"%(self.userName.GetValue())
-                     #cursor.execute(sql)
-                     #results = cursor.fetchall()
-                     #if results:
-                         #for row in results:
-                                 #password = row[0]
-                     #else:
-                         #wx.CallAfter(wx.MessageBox,_('Unable to fecth data,Please check your username'),_('Try it again'), 
-                         #wx.OK | wx.ICON_ERROR)
-                         #wx.CallAfter(self.loginButton.Enable)                   
-                 #except MySQLdb.Error, e:
-                       #wx.CallAfter(wx.MessageBox,'Error %d: %s' % (e.args[0], e.args[1]),_('Try it again'), 
-                       #wx.OK | wx.ICON_ERROR)
-                       #wx.CallAfter(self.loginButton.Enable)                                   
-		#passwd0 = pc.decrypt(password)
-                 #if self.passWord.GetValue()==passwd0:
-                    #try:
                         #cursor.execute("SELECT uncompress(Data) FROM friendlist WHERE name = '%s' LIMIT 1"%(self.userName.GetValue()))
                         #data = json.loads(cursor.fetchone()[0])
                         #cursor.close()
@@ -94,12 +85,12 @@ class LoginFrame(wx.Frame):
                     #bubble_notify = Notify.Notification.new (_("Information"),_("Login Successful"),"file://" + os.path.abspath(os.path.curdir) + "/Chat-TYL.ico")
                     #wx.CallAfter(bubble_notify.show) 
                     #wx.CallAfter(pub.sendMessage,'list.show', data)
-                 #else:
-                     #wx.CallAfter(wx.MessageBox,_('Your Password is wrong'), _('Try it again'), 
-                     #wx.OK | wx.ICON_ERROR)
+              else:
+                wx.CallAfter(wx.MessageBox,_('Your Password is wrong'), _('Try it again'), 
+                wx.OK | wx.ICON_ERROR)
                      #wx.CallAfter(self.loginButton.Enable)    
 if __name__ == '__main__':
     pc = prpcrypt('keyskeyskeyskeys')
     app = wx.App()
-    LoginFrame(None, -1, title = _("Login"), size = (280, 200))
+    LoginFrame(None, -1, title = _("Login"), size = (280, 210))
     app.MainLoop()
