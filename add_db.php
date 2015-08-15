@@ -12,22 +12,11 @@
    } else {
       echo "Opened database successfully\n";
    }
-   if($_GET["text"]=="USER"){
-   	$sql =<<<EOF
-      	CREATE TABLE USER
-      	(
-      	NAME           TEXT    NOT NULL,
-      	PASS           BLOB    NOT NULL        );
-	EOF;
-   }
-   if($_GET["text"]=="FRIEND"){
-        $sql =<<<EOF
-        CREATE TABLE FRIEND
-        (
-        NAME           TEXT    NOT NULL,
-        LIST           BLOB    NOT NULL        );
-        EOF;
-   }
+   $sql ="
+   CREATE TABLE " . $_GET['db'] . "
+   (
+   NAME           TEXT    NOT NULL," . "'" .
+   $_GET['name'] . "'" .         "BLOB    NOT NULL        );";
 
    $ret = $db->exec($sql);
    if(!$ret){
