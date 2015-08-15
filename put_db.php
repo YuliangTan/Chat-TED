@@ -16,6 +16,6 @@
 
    $ret = $db->query($sql);
    $row = $ret->fetchArray(SQLITE3_ASSOC);
-   echo $row;
+   echo $row["'" . $_GET["content"] . "'"];
    $db->close();
 ?>
