@@ -14,7 +14,8 @@
    }
 
    $sql =
-      "INSERT INTO USER (NAME,PASS)
+      "INSERT INTO" . $_GET["db"] . "(" . $_GET["first"] . "," . 
+$_GET["seconed"] . ")
       VALUES (" . "'" . $_GET["name"]  . "'" . "," . "'" . $_GET["pass"] 
 .  "'" .
 ");";
