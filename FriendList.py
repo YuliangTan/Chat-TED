@@ -30,16 +30,16 @@ class MyFrame(wx.Frame):
             sys.exit()
     def __init__(self, parent, id, title,user,un):
         wx.Frame.__init__(self, parent, id, title,
-                          wx.DefaultPosition, wx.Size(200, 450))
+                          wx.DefaultPosition, wx.Size(210, 450))
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         vbox = wx.BoxSizer(wx.VERTICAL)
         panel1 = wx.Panel(self, -1)
         self.tree = wx.TreeCtrl(panel1, 1, wx.DefaultPosition, (-1, -1),
-                                wx.TR_HIDE_ROOT|wx.TR_HAS_BUTTONS)
+                                wx.TR_HIDE_ROOT|wx.TR_DEFAULT_STYLE)
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt,un=un : self.OnClickLeftKey(evt,un), self.tree)
         root = self.tree.AddRoot('My friend')
         for i in user['item']:
-                ch=self.tree.AppendItem(root, i) 
+                ch=self.tree.AppendItem(root, i)
                 for j in user[i]:
                         self.tree.AppendItem(ch, j)
         vbox.Add(self.tree, 1, wx.EXPAND)

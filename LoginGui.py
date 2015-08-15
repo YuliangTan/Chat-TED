@@ -2,7 +2,8 @@
 # encoding: utf-8
 import os
 import wx
-from wx.lib.pubsub import pub as Publisher
+from wx.lib.pubsub import setupkwargs
+from wx.lib.pubsub import pub
 import sys
 import ssl
 import FriendList
@@ -41,12 +42,14 @@ class LoginFrame(wx.Frame):
         self.passWord.Bind(wx.EVT_TEXT_ENTER,self.login_thread)
         self.loginButton = wx.Button(self, label = _('Login'), pos = (80, 145), size = (130, 30))
         self.loginButton.Bind(wx.EVT_BUTTON,self.login_thread)
-        Publisher.subscribe(self.__Friend_list, 'list.show')
+        pub.subscribe(self.__Friend_list, 'list.show')
         self.Show()   
-    def __Friend_list(self, info):
+    def __Friend_list(self, data):
        #print 'Object', message.data, 'is added'
+       #print data
        self.Hide()
-       frame = FriendList.MyFrame(None, id=-1, title=_("Friend List"),user=info.data,un=self.userName.GetValue())
+       time.sleep(0.1)
+       frame = FriendList.MyFrame(None, id=-1, title=_("Friend List"),user=data,un=self.userName.GetValue())
        frame.Show(True)
     def login_thread(self,event):
             thread.start_new_thread(self.login, ())
@@ -68,7 +71,6 @@ class LoginFrame(wx.Frame):
                 wx.CallAfter(self.loginButton.Enable)                                   
 	      passwd0 = pc.decrypt(passwd)
               if self.passWord.GetValue()==passwd0:
-                 print 'OK'
                  #try:
                         #cursor.execute("SELECT uncompress(Data) FROM friendlist WHERE name = '%s' LIMIT 1"%(self.userName.GetValue()))
                         #data = json.loads(cursor.fetchone()[0])
@@ -85,10 +87,17 @@ class LoginFrame(wx.Frame):
                     #bubble_notify = Notify.Notification.new (_("Information"),_("Login Successful"),"file://" + os.path.abspath(os.path.curdir) + "/Chat-TYL.ico")
                     #wx.CallAfter(bubble_notify.show) 
                     #wx.CallAfter(pub.sendMessage,'list.show', data)
+                 try:
+                   data = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=LIST&db=FRIEND&where=NAME&where_t=" + self.userName.GetValue()).read()
+                 except urllib2.HTTPError,e:
+                   wx.CallAfter(wx.MessageBox,_('Unable to fetch data'),_('Error'), wx.OK | wx.ICON_ERROR)
+                   wx.CallAfter(self.loginButton.Enable)
+                 time.sleep(0.1)
+                 wx.CallAfter(pub.sendMessage,'list.show', data=json.loads(data)) 
               else:
                 wx.CallAfter(wx.MessageBox,_('Your Password is wrong'), _('Try it again'), 
                 wx.OK | wx.ICON_ERROR)
-                     #wx.CallAfter(self.loginButton.Enable)    
+                wx.CallAfter(self.loginButton.Enable)    
 if __name__ == '__main__':
     pc = prpcrypt('keyskeyskeyskeys')
     app = wx.App()
