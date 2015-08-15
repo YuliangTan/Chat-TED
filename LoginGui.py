@@ -93,7 +93,7 @@ class LoginFrame(wx.Frame):
                    wx.CallAfter(wx.MessageBox,_('Unable to fetch data'),_('Error'), wx.OK | wx.ICON_ERROR)
                    wx.CallAfter(self.loginButton.Enable)
                  time.sleep(0.1)
-                 wx.CallAfter(pub.sendMessage,'list.show', data=json.loads(data)) 
+                 wx.CallAfter(pub.sendMessage,'list.show', data=json.loads(data))
               else:
                 wx.CallAfter(wx.MessageBox,_('Your Password is wrong'), _('Try it again'), 
                 wx.OK | wx.ICON_ERROR)
