@@ -19,5 +19,8 @@
    if($_GET["content"]="PASS"){
      echo $row['PASS'];
    }
+   if($_GET["content"]="LIST"){
+     echo $row['LIST'];
+   }
    $db->close();
 ?>
