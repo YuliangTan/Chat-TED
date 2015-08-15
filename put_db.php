@@ -16,6 +16,8 @@
 
    $ret = $db->query($sql);
    $row = $ret->fetchArray(SQLITE3_ASSOC);
-   echo $row["'" . $_GET["content"] . "'"];
+   if($_GET["content"]="PASS"){
+     echo $row['PASS'];
+   }
    $db->close();
 ?>
