@@ -15,7 +15,7 @@
  "'" . $_GET["where_t"] . "'" . ";";
 
    $ret = $db->query($sql);
-   $row = $ret->fetchArray(SQLITE3_ASSOC)
+   $row = $ret->fetchArray(SQLITE3_ASSOC);
    echo $row['PASS'];
    $db->close();
 ?>
