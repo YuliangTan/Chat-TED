@@ -107,14 +107,14 @@ class LoginFrame(wx.Frame):
                  wx.CallAfter(wx.MessageBox,_("We can't register,check your network and try it again"),_('Error'), wx.OK | wx.ICON_ERROR)
                  wx.CallAfter(self.loginButton.Enable)    
                try:
-                list = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=FRIEND&first=NAME&seconed=LIST&name=" + self.userName.GetValue() + "&pass={'item': ['friend'],'friend' : ['tyl','Test']}").read()
+                list = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=FRIEND&first=NAME&seconed=LIST&name=" + self.userName.GetValue() + "&pass=" + "{'item': ['friend'],'friend' : ['tyl','Test']}").read()
                except urllib2.HTTPError,e:
                  wx.CallAfter(wx.MessageBox,_("We can't register,check your network and try it again"),_('Error'), wx.OK | wx.ICON_ERROR)
                  wx.CallAfter(self.loginButton.Enable) 
-               wx.CallAfter(wx.MessageBox,_("Register Successful"),_('Error'), wx.OK | wx.ICON_ERROR)
+               wx.CallAfter(wx.MessageBox,_("Register Successful"),_('Information'), wx.OK | wx.ICON_INFORMATION)
                wx.CallAfter(self.loginButton.Enable)
              else:
-               wx.CallAfter(wx.MessageBox,_('You already registered'),_('Error'), wx.OK | wx.ICON_INFORMATION)
+               wx.CallAfter(wx.MessageBox,_('You already registered'),_('Error'), wx.OK | wx.ICON_ERROR)
                wx.CallAfter(self.loginButton.Enable)       
 if __name__ == '__main__':
     pc = prpcrypt('keyskeyskeyskeys')
