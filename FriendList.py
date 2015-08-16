@@ -88,6 +88,6 @@ class MyFrame(wx.Frame):
                                                     max=None) 
         i = 1
         while (i == 1):
-            subscriber = Subscriber(connection, un_g,callback=self.put_info_a ,
+            subscriber = Subscriber(connection, un_g,callback=self.put_info ,
                         matching={'send': 'info-chat'})
             subscriber.listen()

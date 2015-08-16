@@ -78,7 +78,7 @@ class myapp(wx.Frame):
        i = 1
        while (i == 1):
              subscriber = Subscriber(connection, un_g,callback=self.put_text ,
-                      matching={'send': un_g})
+                      matching={'send': username})
              subscriber.listen()
     def send(self): 
         connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
@@ -106,7 +106,7 @@ class myapp(wx.Frame):
              'time': now.strftime('%Y-%m-%d %H:%M:%S')
              }
              user = json.dumps(send_dic)
-             publisher.push({'message': user, 'send': username})          
+             publisher.push({'message': user, 'send': un_g})          
 #if __name__ == '__main__':
     #app = myapp()
     #app.MainLoop()
