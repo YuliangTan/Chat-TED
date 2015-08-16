@@ -3,14 +3,16 @@
 import os
 import wx
 import sys
+import time
 import Talk
 import pymongo
 from pymongo_pubsub import Publisher
 from pymongo_pubsub import Subscriber
 import thread
 import simplejson as json
-#from gi.repository import Notify
 import wx.lib.agw.toasterbox as TB
+from wx.lib.pubsub import setupkwargs
+from wx.lib.pubsub import pub
 def default_cb(n, action,data):
     assert action == "view_text"
     Talk.myapp(None,id=-1,title=_("With ") + data['send'] + _(" Talking"),user_name=data['send'],un=data['user'],addcon=data['content'])
@@ -50,15 +52,33 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, lambda evt,un=un : self.OnClose(evt,un))
         global un_g
         un_g = un
+        toaster = TB.ToasterBox(self, tbstyle=TB.TB_COMPLEX)
+        toaster.SetPopupPauseTime(3000)
+        tbpanel = toaster.GetToasterBoxWindow()
+        panel = wx.Panel(tbpanel, -1)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        text = wx.StaticText(panel, wx.ID_ANY, label="Welcome \n My friend " + un + "\n Nice to meet you")
+        sizer.Add(text, 0, wx.EXPAND)
+        panel.SetSizer(sizer)
+        toaster.AddPanel(panel)
+        wx.CallLater(100, toaster.Play)
         thread.start_new_thread(self.receive, ())
+    def putinfo(self,data):
+        text_json= json.loads(data['message'])
+        toaster = TB.ToasterBox(self, tbstyle=TB.TB_COMPLEX)
+        wx.CallAfter(toaster.SetPopupPauseTime,3000)
+        tbpanel = toaster.GetToasterBoxWindow()
+        panel = wx.Panel(tbpanel,-1)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        text = wx.StaticText(panel, wx.ID_ANY, label=text_json['send'] + " say: \n " + text_json['content'])
+        wx.CallAfter(sizer.Add,text, 0, wx.EXPAND)
+        wx.CallAfter(panel.SetSizer,sizer)
+        wx.CallAfter(toaster.AddPanel,panel)
+        time.sleep (1)
+        wx.CallAfter(toaster.Play)
+        time.sleep (1)
     def put_info(self,data):
-       text_json= json.loads(data['message'])
-       #Notify.init ("Chat-TYL")
-       #n = Notify.Notification.new (text_json['send'] + _(" 
-#say:"),text_json['content'],"file://" + os.path.abspath(os.path.curdir) 
-#+ "/Chat-TYL.ico")
-       #n.add_action("view_text", _("Click me to see"), lambda n,action,data =text_json: default_cb(n,action,data))
-       #n.show ()  
+        wx.CallAfter(self.putinfo,data=data)
     def receive(self):
         connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
         if un_g not in connection.collection_names():
@@ -68,6 +88,6 @@ class MyFrame(wx.Frame):
                                                     max=None) 
         i = 1
         while (i == 1):
-            subscriber = Subscriber(connection, un_g,callback=self.put_info ,
+            subscriber = Subscriber(connection, un_g,callback=self.put_info_a ,
                         matching={'send': 'info-chat'})
             subscriber.listen()
