@@ -107,7 +107,7 @@ class LoginFrame(wx.Frame):
                  wx.CallAfter(wx.MessageBox,_("We can't register,check your network and try it again"),_('Error'), wx.OK | wx.ICON_ERROR)
                  wx.CallAfter(self.loginButton.Enable)    
                try:
-                list = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=FRIEND&first=NAME&seconed=LIST&name=" + self.userName.GetValue() + "&pass=" + "{'item': ['friend'],'friend' : ['tyl','Test']}").read()
+                list = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=FRIEND&first=NAME&seconed=LIST&name=" + self.userName.GetValue() + "&pass=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}").read()
                except urllib2.HTTPError,e:
                  wx.CallAfter(wx.MessageBox,_("We can't register,check your network and try it again"),_('Error'), wx.OK | wx.ICON_ERROR)
                  wx.CallAfter(self.loginButton.Enable) 
