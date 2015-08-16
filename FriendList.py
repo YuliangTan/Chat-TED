@@ -13,10 +13,8 @@ import simplejson as json
 import wx.lib.agw.toasterbox as TB
 from wx.lib.pubsub import setupkwargs
 from wx.lib.pubsub import pub
-def default_cb(n, action,data):
-    assert action == "view_text"
-    Talk.myapp(None,id=-1,title=_("With ") + data['send'] + _(" Talking"),user_name=data['send'],un=data['user'],addcon=data['content'])
-    n.close()
+def default_cb(evt):
+    Talk.myapp(None,id=-1,title=_("With ") + text_json['send'] + _(" Talking"),user_name=text_json['send'],un=text_json['user'],addcon=text_json['content'])
 class MyFrame(wx.Frame):
     def OnClickLeftKey(self, event,un):
         Talk.myapp(None,id=-1,title=_("With ") + self.tree.GetItemText(event.GetItem()) + _(" Talking"),user_name=self.tree.GetItemText(event.GetItem()),un=un,addcon="")
@@ -64,6 +62,7 @@ class MyFrame(wx.Frame):
         wx.CallLater(100, toaster.Play)
         thread.start_new_thread(self.receive, ())
     def putinfo(self,data):
+        global text_json
         text_json= json.loads(data['message'])
         toaster = TB.ToasterBox(self, tbstyle=TB.TB_COMPLEX)
         wx.CallAfter(toaster.SetPopupPauseTime,3000)
@@ -72,6 +71,9 @@ class MyFrame(wx.Frame):
         sizer = wx.BoxSizer(wx.VERTICAL)
         text = wx.StaticText(panel, wx.ID_ANY, label=text_json['send'] + " say: \n " + text_json['content'])
         wx.CallAfter(sizer.Add,text, 0, wx.EXPAND)
+        button = wx.Button(panel, wx.ID_ANY, "Click to view")
+        wx.CallAfter(sizer.Add,button, 0, wx.EXPAND)
+        wx.CallAfter(button.Bind,wx.EVT_BUTTON,default_cb)
         wx.CallAfter(panel.SetSizer,sizer)
         wx.CallAfter(toaster.AddPanel,panel)
         time.sleep (1)
