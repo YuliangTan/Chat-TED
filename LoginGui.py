@@ -86,7 +86,7 @@ class LoginFrame(wx.Frame):
               if self.passWord.GetValue()==passwd0: 
                  #urllib2.urlopen('http://chat-tyl.coding.io/user_log?info=User___'+self.userName.GetValue()+'___Login')
                  try:
-                   data = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=LIST&db=FRIEND&where=NAME&where_t=" + self.userName.GetValue()).read()
+                   data = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=FRIEND&db=USER&where=NAME&where_t=" + self.userName.GetValue()).read()
                  except urllib2.HTTPError,e:
                    wx.CallAfter(wx.MessageBox,_('Unable to fetch data'),_('Error'), wx.OK | wx.ICON_ERROR)
                    wx.CallAfter(self.loginButton.Enable)
@@ -104,8 +104,6 @@ class LoginFrame(wx.Frame):
                wx.CallAfter(self.loginButton.Enable)
              if not cont:   
                try:
-                #print "http://chat-tyl.coding.io/in_db.php?db=USER&name=" + self.userName.GetValue() + "&pass=" + pc.encrypt(self.passWord.GetValue()) + "&friend=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}" + "&avatar=" + open('Chat-TYL.ico', 'rb').read().encode('base64') + "&info=" + "{\"name\":[\"" + self.userName.GetValue() + "\"]}"
-                #reg = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=USER&name=" + self.userName.GetValue() + "&pass=" + pc.encrypt(self.passWord.GetValue()) + "&friend=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}" + "&avatar=" + open('Chat-TYL.ico', 'rb').read().encode('base64') + "&info=" + "{\"name\":[\"" + self.userName.GetValue() + "\"]}").read()
                 req = urllib2.Request("http://chat-tyl.coding.io/in_db.php")
                 data = urllib.urlencode({'db':'USER','name':self.userName.GetValue(),'pass':pc.encrypt(self.passWord.GetValue()),'friend':"{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}",'avatar':open('Chat-TYL.ico', 'rb').read().encode('base64'),'info':"{\"name\":[\"" + self.userName.GetValue() + "\"]}"})
                 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor()) 
