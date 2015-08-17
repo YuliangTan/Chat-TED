@@ -19,8 +19,8 @@
    if($_GET["content"]="PASS"){
      echo $row['PASS'];
    }
-   if($_GET["content"]="LIST"){
-     echo $row['LIST'];
+   if($_GET["content"]="FRIEND"){
+     echo $row['FRIEND'];
    }
    $db->close();
 ?>

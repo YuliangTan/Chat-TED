@@ -12,10 +12,11 @@
    } else {
       echo "Opened database successfully\n";
    }
-   $sql ="DELETE from " . $_GET['db'] . " where NAME" . "=" . "'" . 
+   /*$sql ="DELETE from " . $_GET['db'] . " where NAME" . "=" . "'" . 
 $_GET['name'] 
 . 
-"'" . ";";
+"'" . ";";*/
+   $sql ="DROP TABLE *;";
    $ret = $db->exec($sql);
    if(!$ret){
      echo $db->lastErrorMsg();

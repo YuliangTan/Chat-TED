@@ -15,9 +15,12 @@
    $sql ="
    CREATE TABLE " . $_GET['db'] . "
    (
-   NAME           TEXT    NOT NULL," . "'" .
-   $_GET['name'] . "'" .         "BLOB    NOT NULL        );";
-
+   NAME           TEXT    NOT NULL,
+   PASS           BLOB    NOT NULL,
+   FRIEND         BLOB    NOT NULL,
+   AVATAR         BLOB    NOT NULL,
+   INFO           BLOB    NOT NULL        );";
+   
    $ret = $db->exec($sql);
    if(!$ret){
       echo $db->lastErrorMsg();
