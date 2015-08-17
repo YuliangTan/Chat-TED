@@ -14,10 +14,10 @@
    }
 
    $sql =
-      "INSERT INTO " . $_GET["db"] . "(NAME,PASS,FRIEND,AVATAR,INFO) 
-      VALUES (" . "'" . $_GET["name"]  . "'" . "," . "'" . $_GET["pass"] 
-.  "'" . "," . "'" . $_GET["friend"] . "'" . "," . "'" . $_GET["avatar"] 
-. "'" . "," . "'" . $_GET["info"] . "'" . 
+      "INSERT INTO " . $_POST["db"] . "(NAME,PASS,FRIEND,AVATAR,INFO) 
+      VALUES (" . "'" . $_POST["name"]  . "'" . "," . "'" . $_POST["pass"] 
+.  "'" . "," . "'" . $_POST["friend"] . "'" . "," . "'" . $_POST["avatar"] 
+. "'" . "," . "'" . $_POST["info"] . "'" . 
 ");";
    echo $sql
    $ret = $db->exec($sql);
