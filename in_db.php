@@ -17,7 +17,7 @@
       "INSERT INTO " . $_GET["db"] . "(NAME,PASS,FRIEND,AVATAR,INFO) 
       VALUES (" . "'" . $_GET["name"]  . "'" . "," . "'" . $_GET["pass"] 
 .  "'" . "," . "'" . $_GET["friend"] . "'" . "," . "'" . $_GET["avatar"] 
-. "'" . "," . $_GET["info"] . "'" . 
+. "'" . "," "'" . $_GET["info"] . "'" . 
 ");";
 
    $ret = $db->exec($sql);
