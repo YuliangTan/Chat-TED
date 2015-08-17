@@ -19,7 +19,7 @@
 .  "'" . "," . "'" . $_GET["friend"] . "'" . "," . "'" . $_GET["avatar"] 
 . "'" . "," . "'" . $_GET["info"] . "'" . 
 ");";
-
+   echo $sql
    $ret = $db->exec($sql);
    if(!$ret){
       echo $db->lastErrorMsg();
