@@ -11,6 +11,7 @@ from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 #import MySQLdb
 import urllib2
+import urllib
 import simplejson as json
 #from gi.repository import Notify
 import wx.lib.agw.toasterbox as TB
@@ -104,12 +105,14 @@ class LoginFrame(wx.Frame):
              if not cont:   
                try:
                 #print "http://chat-tyl.coding.io/in_db.php?db=USER&name=" + self.userName.GetValue() + "&pass=" + pc.encrypt(self.passWord.GetValue()) + "&friend=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}" + "&avatar=" + open('Chat-TYL.ico', 'rb').read().encode('base64') + "&info=" + "{\"name\":[\"" + self.userName.GetValue() + "\"]}"
-                reg = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=USER&name=" + self.userName.GetValue() + "&pass=" + pc.encrypt(self.passWord.GetValue()) + "&friend=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}" + "&avatar=" + open('Chat-TYL.ico', 'rb').read().encode('base64') + "&info=" + "{\"name\":[\"" + self.userName.GetValue() + "\"]}").read()
+                #reg = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=USER&name=" + self.userName.GetValue() + "&pass=" + pc.encrypt(self.passWord.GetValue()) + "&friend=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}" + "&avatar=" + open('Chat-TYL.ico', 'rb').read().encode('base64') + "&info=" + "{\"name\":[\"" + self.userName.GetValue() + "\"]}").read()
+                req = urllib2.Request("http://chat-tyl.coding.io/in_db.php")
+                data = urllib.urlencode({'db':'USER','name':self.userName.GetValue(),'pass':pc.encrypt(self.passWord.GetValue()),'friend':"{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}",'avatar':open('Chat-TYL.ico', 'rb').read().encode('base64'),'info':"{\"name\":[\"" + self.userName.GetValue() + "\"]}"})
+                opener = urllib2.build_opener(urllib2.HTTPCookieProcessor()) 
+                opener.open(req, data).read()  
                except urllib2.HTTPError,e:
                  wx.CallAfter(wx.MessageBox,_("We can't register,check your network and try it again"),_('Error'), wx.OK | wx.ICON_ERROR)
                  wx.CallAfter(self.loginButton.Enable)    
-               #try:
-                #list = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=FRIEND&first=NAME&seconed=LIST&name=" + self.userName.GetValue() + "&pass=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}").read()
                wx.CallAfter(wx.MessageBox,_("Register Successful"),_('Information'), wx.OK | wx.ICON_INFORMATION)
                wx.CallAfter(self.loginButton.Enable)
              else:
