@@ -19,7 +19,6 @@
 .  "'" . "," . "'" . $_POST["friend"] . "'" . "," . "'" . $_POST["avatar"] 
 . "'" . "," . "'" . $_POST["info"] . "'" . 
 ");";
-   echo $sql
    $ret = $db->exec($sql);
    if(!$ret){
       echo $db->lastErrorMsg();
