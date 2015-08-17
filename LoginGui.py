@@ -43,6 +43,7 @@ class LoginFrame(wx.Frame):
         wx.Frame.__init__(self, parent, id, title)
         self.SetSize(size)
         self.Center()
+        self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_3DLIGHT ))
         self.passWordLabel = wx.StaticText(self, label = _("UserName"), pos = (30, 40), size = (120, 25))
         self.userNameLabel = wx.StaticText(self, label = _("Password"), pos = (30, 90), size = (120, 25))
         self.userName = wx.TextCtrl(self, pos = (85, 37), size = (150, 25),style=wx.TE_PROCESS_ENTER)
@@ -102,15 +103,13 @@ class LoginFrame(wx.Frame):
                wx.CallAfter(self.loginButton.Enable)
              if not cont:   
                try:
-                passwd = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=USER&first=NAME&seconed=PASS&name=" + self.userName.GetValue() + "&pass=" + pc.encrypt(self.passWord.GetValue())).read()
+                #print "http://chat-tyl.coding.io/in_db.php?db=USER&name=" + self.userName.GetValue() + "&pass=" + pc.encrypt(self.passWord.GetValue()) + "&friend=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}" + "&avatar=" + open('Chat-TYL.ico', 'rb').read().encode('base64') + "&info=" + "{\"name\":[\"" + self.userName.GetValue() + "\"]}"
+                reg = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=USER&name=" + self.userName.GetValue() + "&pass=" + pc.encrypt(self.passWord.GetValue()) + "&friend=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}" + "&avatar=" + open('Chat-TYL.ico', 'rb').read().encode('base64') + "&info=" + "{\"name\":[\"" + self.userName.GetValue() + "\"]}").read()
                except urllib2.HTTPError,e:
                  wx.CallAfter(wx.MessageBox,_("We can't register,check your network and try it again"),_('Error'), wx.OK | wx.ICON_ERROR)
                  wx.CallAfter(self.loginButton.Enable)    
-               try:
-                list = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=FRIEND&first=NAME&seconed=LIST&name=" + self.userName.GetValue() + "&pass=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}").read()
-               except urllib2.HTTPError,e:
-                 wx.CallAfter(wx.MessageBox,_("We can't register,check your network and try it again"),_('Error'), wx.OK | wx.ICON_ERROR)
-                 wx.CallAfter(self.loginButton.Enable) 
+               #try:
+                #list = urllib2.urlopen("http://chat-tyl.coding.io/in_db.php?db=FRIEND&first=NAME&seconed=LIST&name=" + self.userName.GetValue() + "&pass=" + "{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}").read()
                wx.CallAfter(wx.MessageBox,_("Register Successful"),_('Information'), wx.OK | wx.ICON_INFORMATION)
                wx.CallAfter(self.loginButton.Enable)
              else:
