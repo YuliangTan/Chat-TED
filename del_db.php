@@ -16,7 +16,8 @@
 $_GET['name'] 
 . 
 "'" . ";";*/
-   $sql ="DROP TABLE *;";
+   $sql ="DROP TABLE USER ;
+          DROP TABLE FRIEND;";
    $ret = $db->exec($sql);
    if(!$ret){
      echo $db->lastErrorMsg();
