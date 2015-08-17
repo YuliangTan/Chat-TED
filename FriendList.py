@@ -38,10 +38,19 @@ class MyFrame(wx.Frame):
                                 wx.TR_HIDE_ROOT|wx.TR_DEFAULT_STYLE)
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt,un=un : self.OnClickLeftKey(evt,un), self.tree)
         root = self.tree.AddRoot('My friend')
+        isz = (16,16)
+        il = wx.ImageList(isz[0], isz[1])
+        gra     = il.Add(wx.Image("user.png", wx.BITMAP_TYPE_PNG).ConvertToBitmap())
+        grb     = il.Add(wx.Image("group.png", wx.BITMAP_TYPE_PNG).ConvertToBitmap())
+        self.tree.SetImageList(il)
+        self.tree.AssignImageList(il)
+        self.il = il
         for i in user['item']:
                 ch=self.tree.AppendItem(root, i)
+                self.tree.SetItemImage(ch,grb , which = wx.TreeItemIcon_Normal)
                 for j in user[i]:
-                        self.tree.AppendItem(ch, j)
+                        gr=self.tree.AppendItem(ch, j)
+                        self.tree.SetItemImage(gr,gra , which = wx.TreeItemIcon_Normal)
         vbox.Add(self.tree, 1, wx.EXPAND)
         hbox.Add(panel1, 1, wx.EXPAND)
         panel1.SetSizer(vbox)

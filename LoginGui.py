@@ -105,7 +105,7 @@ class LoginFrame(wx.Frame):
              if not cont:   
                try:
                 req = urllib2.Request("http://chat-tyl.coding.io/in_db.php")
-                data = urllib.urlencode({'db':'USER','name':self.userName.GetValue(),'pass':pc.encrypt(self.passWord.GetValue()),'friend':"{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}",'avatar':open('Chat-TYL.ico', 'rb').read().encode('base64'),'info':"{\"name\":[\"" + self.userName.GetValue() + "\"]}"})
+                data = urllib.urlencode({'db':'USER','name':self.userName.GetValue(),'pass':pc.encrypt(self.passWord.GetValue()),'friend':"{\"item\":[\"friend\"],\"friend\":[\"tyl\",\"Test\"]}",'avatar':'default','info':"{\"name\":[\"" + self.userName.GetValue() + "\"]}"})
                 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor()) 
                 opener.open(req, data).read()  
                except urllib2.HTTPError,e:
