@@ -28,6 +28,27 @@ class MyFrame(wx.Frame):
             connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
             connection.drop_collection(un)
             sys.exit()
+    def AddFriend(self,event):
+        """
+        Based on the wxPython demo by the same name
+        """
+        dlg = wx.TextEntryDialog(
+                self, 'Please Enter Your Friend Name',
+                'Add Friend', '')
+        if dlg.ShowModal() == wx.ID_OK:
+            if not dlg.GetValue():
+               wx.MessageBox(_('Please enter your Friend name'), _('Error'), 
+                  wx.OK | wx.ICON_ERROR)
+            else:
+              dlg = wx.SingleChoiceDialog(
+                      self, "Find your Friend", 'Search results',
+                      ["C++", "VB", "Python", "Perl", "Ruby", "FoxPro"], 
+                      wx.CHOICEDLG_STYLE
+                      )
+              if dlg.ShowModal() == wx.ID_OK:
+                 print 'You selected: %s\n' % dlg.GetStringSelection()
+              dlg.Destroy()
+        dlg.Destroy()
     def __init__(self, parent, id, title,user,un):
         wx.Frame.__init__(self, parent, id, title,
                           wx.DefaultPosition, wx.Size(210, 450))
@@ -51,6 +72,20 @@ class MyFrame(wx.Frame):
                 for j in user[i]:
                         gr=self.tree.AppendItem(ch, j)
                         self.tree.SetItemImage(gr,gra , which = wx.TreeItemIcon_Normal)
+        menuBar = wx.MenuBar()
+        menu = wx.Menu()
+        m_exit = menu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Close window and exit program.")
+        self.Bind(wx.EVT_MENU, lambda evt,un=un : self.OnClose(evt,un), m_exit)
+        menuBar.Append(menu, "&File")
+        menu = wx.Menu()
+        m_friend = menu.Append(wx.ID_NEW, "&Add Friend", "Meet your friend")
+        menuBar.Append(menu, "&Option")
+        self.Bind(wx.EVT_MENU, self.AddFriend, m_friend)
+        menu = wx.Menu()
+        m_about = menu.Append(wx.ID_ABOUT, "&About", "Information about this program")
+        #self.Bind(wx.EVT_MENU, self.OnAbout, m_about)
+        menuBar.Append(menu, "&Help")
+        self.SetMenuBar(menuBar)
         vbox.Add(self.tree, 1, wx.EXPAND)
         hbox.Add(panel1, 1, wx.EXPAND)
         panel1.SetSizer(vbox)
