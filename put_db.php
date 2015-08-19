@@ -11,7 +11,8 @@
       echo $db->lastErrorMsg();
    }
 
-   $sql ="SELECT " . $_GET["content"] . " from " .  $_GET["db"] . " WHERE " . $_GET["where"] . "=" . 
+   $sql ="SELECT " . $_GET["content"] . " from " .  $_GET["db"] . " 
+WHERE " . $_GET["where"] . $_GET["where_a"] . 
  "'" . $_GET["where_t"] . "'" . ";";
 
    $ret = $db->query($sql);
