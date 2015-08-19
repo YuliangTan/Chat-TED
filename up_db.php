@@ -3,7 +3,7 @@
    {
       function __construct()
       {
-         $this->open('test.db');
+         $this->open('/home/vcap/fs/2ad834759b976e6/tylchat.db');
       }
    }
    $db = new MyDB();
