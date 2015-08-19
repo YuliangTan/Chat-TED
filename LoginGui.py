@@ -78,7 +78,7 @@ class LoginFrame(wx.Frame):
          else:
            if self.cb.IsChecked()==False:
               try:
-                passwd = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=PASS&db=USER&where=NAME&where_t=" + self.userName.GetValue()).read()
+                passwd = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=PASS&db=USER&where=NAME&where_a==&where_t=" + self.userName.GetValue()).read()
               except urllib2.HTTPError,e:
                 wx.CallAfter(wx.MessageBox,_('Unable to fetch data'),_('Error'), wx.OK | wx.ICON_ERROR)
                 wx.CallAfter(self.loginButton.Enable)                                   
@@ -86,7 +86,7 @@ class LoginFrame(wx.Frame):
               if self.passWord.GetValue()==passwd0: 
                  #urllib2.urlopen('http://chat-tyl.coding.io/user_log?info=User___'+self.userName.GetValue()+'___Login')
                  try:
-                   data = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=FRIEND&db=USER&where=NAME&where_t=" + self.userName.GetValue()).read()
+                   data = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=FRIEND&db=USER&where=NAME&where_a==&where_t=" + self.userName.GetValue()).read()
                  except urllib2.HTTPError,e:
                    wx.CallAfter(wx.MessageBox,_('Unable to fetch data'),_('Error'), wx.OK | wx.ICON_ERROR)
                    wx.CallAfter(self.loginButton.Enable)
@@ -98,7 +98,7 @@ class LoginFrame(wx.Frame):
                 wx.CallAfter(self.loginButton.Enable) 
            else:
              try:
-               cont = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=PASS&db=USER&where=NAME&where_t=" + self.userName.GetValue()).read()
+               cont = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=PASS&db=USER&where=NAME&where_a==&where_t=" + self.userName.GetValue()).read()
              except urllib2.HTTPError,e:
                wx.CallAfter(wx.MessageBox,_('Check Your NetWork,and try it again'),_('Error'), wx.OK | wx.ICON_ERROR)
                wx.CallAfter(self.loginButton.Enable)

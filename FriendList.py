@@ -13,6 +13,7 @@ import simplejson as json
 import wx.lib.agw.toasterbox as TB
 from wx.lib.pubsub import setupkwargs
 from wx.lib.pubsub import pub
+import urllib2
 def default_cb(evt):
     Talk.myapp(None,id=-1,title=_("With ") + text_json['send'] + _(" Talking"),user_name=text_json['send'],un=text_json['user'],addcon=text_json['content'])
 class MyFrame(wx.Frame):
@@ -40,14 +41,43 @@ class MyFrame(wx.Frame):
                wx.MessageBox(_('Please enter your Friend name'), _('Error'), 
                   wx.OK | wx.ICON_ERROR)
             else:
-              dlg = wx.SingleChoiceDialog(
+              name = dlg.GetValue()
+              try:
+                friend = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=PASS&db=USER&where=NAME&where_a==&where_t=" + name).read()
+              except urllib2.HTTPError,e:
+                wx.MessageBox(_('Check Your NetWork,and try it again'),_('Error'), wx.OK | wx.ICON_ERROR)
+              if friend == '':
+                 wx.MessageBox(_("We can't find it"),_('Error'), wx.OK | wx.ICON_ERROR)
+              else:
+                dlg = wx.SingleChoiceDialog(
                       self, "Find your Friend", 'Search results',
-                      ["C++", "VB", "Python", "Perl", "Ruby", "FoxPro"], 
+                      [name], 
                       wx.CHOICEDLG_STYLE
                       )
-              if dlg.ShowModal() == wx.ID_OK:
-                 print 'You selected: %s\n' % dlg.GetStringSelection()
-              dlg.Destroy()
+                if dlg.ShowModal() == wx.ID_OK:
+                   try:
+                     list = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=FRIEND&db=USER&where=NAME&where_a==&where_t=" + name).read()
+                     data = json.loads(list)
+                   except urllib2.HTTPError,e:
+                     wx.MessageBox(_('Check Your NetWork,and try it again'),_('Error'), wx.OK | wx.ICON_ERROR)   
+                   for i in data['item']:
+                       for j in data[i]:
+                           if j == name:
+                              connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
+                              if un_g not in connection.collection_names():
+                                 connection.create_collection(un_g,
+                                                    capped=True,
+                                                    size=1000000,
+                                                    max=None)                               
+                              publisher = Publisher(connection, name)
+                              send_dic = {
+                              'type': 'add-friend',
+                              'user' : un_g 
+                              }
+                              user = json.dumps(send_dic)
+                              publisher.push({'message': user, 'send': 'info-chat'})
+                              wx.MessageBox(_("Your request send to your friend"),_('Information'), wx.OK | wx.ICON_INFORMATION)                                  
+                   dlg.Destroy()
         dlg.Destroy()
     def __init__(self, parent, id, title,user,un):
         wx.Frame.__init__(self, parent, id, title,
@@ -72,6 +102,8 @@ class MyFrame(wx.Frame):
                 for j in user[i]:
                         gr=self.tree.AppendItem(ch, j)
                         self.tree.SetItemImage(gr,gra , which = wx.TreeItemIcon_Normal)
+        global un_g
+        un_g = un
         menuBar = wx.MenuBar()
         menu = wx.Menu()
         m_exit = menu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Close window and exit program.")
@@ -92,8 +124,6 @@ class MyFrame(wx.Frame):
         self.SetSizer(hbox)
         self.Center()
         self.Bind(wx.EVT_CLOSE, lambda evt,un=un : self.OnClose(evt,un))
-        global un_g
-        un_g = un
         toaster = TB.ToasterBox(self, tbstyle=TB.TB_COMPLEX)
         toaster.SetPopupPauseTime(3000)
         tbpanel = toaster.GetToasterBoxWindow()
@@ -108,21 +138,38 @@ class MyFrame(wx.Frame):
     def putinfo(self,data):
         global text_json
         text_json= json.loads(data['message'])
-        toaster = TB.ToasterBox(self, tbstyle=TB.TB_COMPLEX)
-        wx.CallAfter(toaster.SetPopupPauseTime,3000)
-        tbpanel = toaster.GetToasterBoxWindow()
-        panel = wx.Panel(tbpanel,-1)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        text = wx.StaticText(panel, wx.ID_ANY, label=text_json['send'] + " say: \n " + text_json['content'])
-        wx.CallAfter(sizer.Add,text, 0, wx.EXPAND)
-        button = wx.Button(panel, wx.ID_ANY, "Click to view")
-        wx.CallAfter(sizer.Add,button, 0, wx.EXPAND)
-        wx.CallAfter(button.Bind,wx.EVT_BUTTON,default_cb)
-        wx.CallAfter(panel.SetSizer,sizer)
-        wx.CallAfter(toaster.AddPanel,panel)
-        time.sleep (1)
-        wx.CallAfter(toaster.Play)
-        time.sleep (1)
+        if text_json['type'] == 'info-in-line': 
+           toaster = TB.ToasterBox(self, tbstyle=TB.TB_COMPLEX)
+           wx.CallAfter(toaster.SetPopupPauseTime,3000)
+           tbpanel = toaster.GetToasterBoxWindow()
+           panel = wx.Panel(tbpanel,-1)
+           sizer = wx.BoxSizer(wx.VERTICAL)
+           text = wx.StaticText(panel, wx.ID_ANY, label=text_json['send'] + " say: \n " + text_json['content'])
+           wx.CallAfter(sizer.Add,text, 0, wx.EXPAND)
+           button = wx.Button(panel, wx.ID_ANY, "Click to view")
+           wx.CallAfter(sizer.Add,button, 0, wx.EXPAND)
+           wx.CallAfter(button.Bind,wx.EVT_BUTTON,default_cb)
+           wx.CallAfter(panel.SetSizer,sizer)
+           wx.CallAfter(toaster.AddPanel,panel)
+           time.sleep (1)
+           wx.CallAfter(toaster.Play)
+           time.sleep (1)
+        if text_json['type'] == 'add-friend':
+           toaster = TB.ToasterBox(self, tbstyle=TB.TB_COMPLEX)
+           wx.CallAfter(toaster.SetPopupPauseTime,3000)
+           tbpanel = toaster.GetToasterBoxWindow()
+           panel = wx.Panel(tbpanel,-1)
+           sizer = wx.BoxSizer(wx.VERTICAL)
+           text = wx.StaticText(panel, wx.ID_ANY, label=text_json['user'])
+           wx.CallAfter(sizer.Add,text, 0, wx.EXPAND)
+           button = wx.Button(panel, wx.ID_ANY, "I agree")
+           wx.CallAfter(sizer.Add,button, 0, wx.EXPAND)
+           #wx.CallAfter(button.Bind,wx.EVT_BUTTON,default_cb)
+           wx.CallAfter(panel.SetSizer,sizer)
+           wx.CallAfter(toaster.AddPanel,panel)
+           time.sleep (1)
+           wx.CallAfter(toaster.Play)
+           time.sleep (1)            
     def put_info(self,data):
         wx.CallAfter(self.putinfo,data=data)
     def receive(self):
