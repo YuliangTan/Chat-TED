@@ -14,6 +14,7 @@ import wx.lib.agw.toasterbox as TB
 from wx.lib.pubsub import setupkwargs
 from wx.lib.pubsub import pub
 import urllib2
+import re
 def default_cb(evt):
     Talk.myapp(None,id=-1,title=_("With ") + text_json['send'] + _(" Talking"),user_name=text_json['send'],un=text_json['user'],addcon=text_json['content'])
 class MyFrame(wx.Frame):
@@ -139,6 +140,26 @@ class MyFrame(wx.Frame):
         toaster.AddPanel(panel)
         wx.CallLater(100, toaster.Play)
         thread.start_new_thread(self.receive, ())
+    def agree_fr(evt,self):
+        try:
+         list = urllib2.urlopen("http://chat-tyl.coding.io/put_db.php?content=FRIEND&db=USER&where=NAME&where_a==&where_t=" + text_json['user']).read()
+        except urllib2.HTTPError,e:
+           wx.CallAfter(wx.MessageBox,_('NetWork Error'),_('Error'), wx.OK | wx.ICON_ERROR) 
+        list=json.loads(list)
+        list['friend'].append(un_g)
+        list=str(list)  
+        list = re.sub("'","\"",list) 
+        list = re.sub("u","",list) 
+        list = re.sub(" ",'',list) 
+        try:
+         up_list = urllib2.urlopen("http://chat-tyl.coding.io/up_db.php?label=FRIEND&content=" + list + "&where=NAME&ch=" + text_json['user']).read()
+        except urllib2.HTTPError,e:
+           wx.CallAfter(wx.MessageBox,_('NetWork Error'),_('Error'), wx.OK | wx.ICON_ERROR)
+        try:
+         up_list = urllib2.urlopen("http://chat-tyl.coding.io/up_db.php?label=FRIEND&content=" + list + "&where=NAME&ch=" + un_g).read()
+        except urllib2.HTTPError,e:
+           wx.CallAfter(wx.MessageBox,_('NetWork Error'),_('Error'), wx.OK | wx.ICON_ERROR)      
+        wx.CallAfter(wx.MessageBox,text_json["user"] + " be your friend",_('Information'), wx.OK | wx.ICON_INFORMATION)                      
     def putinfo(self,data):
         global text_json
         text_json= json.loads(data['message'])
@@ -168,7 +189,7 @@ class MyFrame(wx.Frame):
            wx.CallAfter(sizer.Add,text, 0, wx.EXPAND)
            button = wx.Button(panel, wx.ID_ANY, "I agree")
            wx.CallAfter(sizer.Add,button, 0, wx.EXPAND)
-           #wx.CallAfter(button.Bind,wx.EVT_BUTTON,default_cb)
+           wx.CallAfter(button.Bind,wx.EVT_BUTTON,self.agree_fr)
            wx.CallAfter(panel.SetSizer,sizer)
            wx.CallAfter(toaster.AddPanel,panel)
            time.sleep (1)
