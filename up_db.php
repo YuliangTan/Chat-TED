@@ -14,7 +14,7 @@
    }
    $sql ="UPDATE USER set " . $_GET['label'] . "=" . "'" . 
 $_GET['content'] . "'" . 
-"where " . 
+" where " . 
 $_GET['name'] 
 . "=" . "'" . $GET['ch'] . "'" 
 . 
