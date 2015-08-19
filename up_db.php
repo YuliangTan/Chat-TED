@@ -16,7 +16,7 @@
 $_GET['content'] . "'" . 
 " where " . 
 $_GET['where'] 
-. "=" . "'" . $GET['ch'] . "'" 
+. "=" . "'" . $_GET['ch'] . "'" 
 . 
 ";";
    $ret = $db->exec($sql);
