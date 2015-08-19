@@ -63,9 +63,12 @@ class MyFrame(wx.Frame):
                    for i in data['item']:
                        for j in data[i]:
                            if j == name:
+                              wx.MessageBox(_(name + ' is already your friend now'),_('Error'), wx.OK | wx.ICON_ERROR)  
+                              break
+                           else: 
                               connection = pymongo.MongoClient('mongodb://tyl:22842218@ds051738.mongolab.com:51738/tylchat?authMechanism=SCRAM-SHA-1').get_default_database()
-                              if un_g not in connection.collection_names():
-                                 connection.create_collection(un_g,
+                              if name not in connection.collection_names():
+                                 connection.create_collection(name,
                                                     capped=True,
                                                     size=1000000,
                                                     max=None)                               
@@ -76,7 +79,8 @@ class MyFrame(wx.Frame):
                               }
                               user = json.dumps(send_dic)
                               publisher.push({'message': user, 'send': 'info-chat'})
-                              wx.MessageBox(_("Your request send to your friend"),_('Information'), wx.OK | wx.ICON_INFORMATION)                                  
+                              wx.MessageBox(_("Your request send to your friend"),_('Information'), wx.OK | wx.ICON_INFORMATION)       
+                              break                           
                    dlg.Destroy()
         dlg.Destroy()
     def __init__(self, parent, id, title,user,un):
@@ -160,7 +164,7 @@ class MyFrame(wx.Frame):
            tbpanel = toaster.GetToasterBoxWindow()
            panel = wx.Panel(tbpanel,-1)
            sizer = wx.BoxSizer(wx.VERTICAL)
-           text = wx.StaticText(panel, wx.ID_ANY, label=text_json['user'])
+           text = wx.StaticText(panel, wx.ID_ANY, label=text_json['user'] + "\n wants to be your friend")
            wx.CallAfter(sizer.Add,text, 0, wx.EXPAND)
            button = wx.Button(panel, wx.ID_ANY, "I agree")
            wx.CallAfter(sizer.Add,button, 0, wx.EXPAND)
