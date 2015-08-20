@@ -84,6 +84,39 @@ class MyFrame(wx.Frame):
                               break                           
                    dlg.Destroy()
         dlg.Destroy()
+    def OnAbout(self, e):       
+        description = """Chat-TYL is a simple and anonymous chat software based on WxPython and MongoDB
+"""
+
+        licence = """Chat-TYL is free software; you can redistribute 
+it and/or modify it under the terms of the GNU General Public License as 
+published by the Free Software Foundation; either version 2 of the License, 
+or (at your option) any later version.
+
+Chat-TYL is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+See the GNU General Public License for more details. You should have 
+received a copy of the GNU General Public License along with Chat-TYL; 
+if not, write to the Free Software Foundation, Inc., 59 Temple Place, 
+Suite 330, Boston, MA  02111-1307  USA"""
+
+
+        info = wx.AboutDialogInfo()
+
+        info.SetIcon(wx.Icon('Chat-TYL.png', wx.BITMAP_TYPE_PNG))
+        info.SetName('Chat-TYL')
+        info.SetVersion('0.0.1-RC1')
+        info.SetDescription(description)
+        info.SetCopyright('(C) 2015 - 2015 Dev-tan')
+        info.SetWebSite('http://dev-tan.gq')
+        info.SetLicence(licence)
+        info.AddDeveloper('TanYuliang')
+        info.AddDocWriter('TanYuliang')
+        info.AddArtist('TanYuliang')
+        info.AddTranslator('TanYuliang')
+
+        wx.AboutBox(info)
     def __init__(self, parent, id, title,user,un):
         wx.Frame.__init__(self, parent, id, title,
                           wx.DefaultPosition, wx.Size(210, 450))
@@ -120,7 +153,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.AddFriend, m_friend)
         menu = wx.Menu()
         m_about = menu.Append(wx.ID_ABOUT, "&About", "Information about this program")
-        #self.Bind(wx.EVT_MENU, self.OnAbout, m_about)
+        self.Bind(wx.EVT_MENU, self.OnAbout, m_about)
         menuBar.Append(menu, "&Help")
         self.SetMenuBar(menuBar)
         vbox.Add(self.tree, 1, wx.EXPAND)
