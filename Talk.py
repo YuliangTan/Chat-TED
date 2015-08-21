@@ -1,4 +1,5 @@
-# -*- coding: UTF-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
 import wx
 import datetime
 import pymongo
@@ -17,6 +18,15 @@ class myapp(wx.Frame):
        except urllib2.HTTPError,e:
           print e.code
        self.Destroy()
+    def OnFace(self, event):
+        dlg = wx.SingleChoiceDialog(
+                self, "What's your favorite langauge?", 'The Caption',
+                ["＜（－︿－）＞", "＜（＞＿＜)  ＞", "＜（￣︶￣）＞", "＜（￣︶￣）／", "＜（＠￣︶￣＠）＞", "（＃￣▽￣＃）","＼（￣︶￣）／","ｂ（￣▽￣）ｄ","╰（￣▽￣）╭","（￣︶￣）↗","○（＊￣︶￣＊）○","♀（￣▽￣）／","♂（￣▽￣）／","╮（╯◇╰）╭","╭（′▽‵）╭（′▽‵）╭（′▽‵）╯","（￣▽￣）～■□～（￣▽￣）","＜（￣︶￣）＞＜（￣︶￣）＞＜（￣︶￣）＞","（╯‵□′）╯︵┴─┴ ","╭∩╮（￣▽￣）╭∩╮","（╬￣皿￣）＝○＃（￣＃）３￣）","＜（‵□′）＞───Ｃε（┬＿┬）３ ","＜( ￣︿￣)︵θ︵θ︵θ︵θ︵☆（＞口＜－）","＝　＝＃","(#‵′)","（￣ c￣）y▂ξ ","(￣(工)￣) ","( ▔___▔)y-～ ","（～￣▽￣～）","╭(─??─)╮ ▃▇","<(￣3￣)>","－(>口＜-)","<(‵▽′)>","o(〒﹏〒)o","╮(￣▽￣\")╭ ","ψ(._. )>","≧ω≦","O口O!","ο-_-)０)。０)","m(_ _)m","(⊙０⊙) ","⊙ . ⊙ ","－ －|||| ","?~? ", "◎?◎？","(T_T)  ","(/‵Ⅲ′)/"], 
+                wx.CHOICEDLG_STYLE
+                )
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tinput.AppendText(dlg.GetStringSelection() )
+        dlg.Destroy()
     def __init__(self, parent, id,title,user_name,un,addcon):
         wx.Frame.__init__(self,parent,id,title,wx.DefaultPosition,wx.Size(400,300))
         global username
@@ -42,6 +52,14 @@ class myapp(wx.Frame):
             self.tshow.AppendText(_("User:")+now.strftime('%Y-%m-%d %H:%M:%S')+"\n")       
             self.tshow.SetDefaultStyle(wx.TextAttr("BLACK"))
             self.tshow.AppendText(addcon + "\n")
+        menuBar = wx.MenuBar()
+        menu = wx.Menu()
+        m_exit = menu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Close window and exit program.")
+        m_face = menu.Append(wx.ID_NEW, "&Face", "Many Face here")
+        self.Bind(wx.EVT_MENU,self.OnClose, m_exit)
+        self.Bind(wx.EVT_MENU,self.OnFace, m_face)
+        menuBar.Append(menu, "&File")
+        self.SetMenuBar(menuBar)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         self.bt.Bind(wx.EVT_BUTTON,self.btaction)        
         thread.start_new_thread(self.receive, ())
